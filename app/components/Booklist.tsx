@@ -30,7 +30,7 @@ function BookList() {
     return <div className='flex flex-wrap gap-8 mt-8'>
         {books.map(book => {
             return (
-                <BookItem book={book} />
+                <BookItem book={book} key={book.id} />
             )
         })}
     </div>

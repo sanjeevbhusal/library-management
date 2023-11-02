@@ -92,7 +92,26 @@ export default async function Page({ params }: Props) {
         <button className="border px-6 py-2 bg-blue-500 rounded-md mt-6">Book Now</button>
         <div className="mt-8">
             <h1 className="font-bold text-lg">Reviews</h1>
-            <div></div>
+            <div className="flex flex-col lg:flex-row gap-4 flex-wrap mt-4">
+                {
+                    reviews.map(review => {
+                        return <div className="grow border border-black rounded-lg p-2 basis-80">
+                            <div className="flex justify-between">
+                                <div className="flex gap-2 ">
+                                    <div className="w-8 h-8 flex items-center justify-center rounded-full border border-black">SB</div>
+                                    <div className="text-sm text-neutral-600">
+                                        <p className="font-semibold">Sanjeev Bhusal</p>
+                                        <p>Software Engineer</p>
+                                    </div>
+                                </div>
+                                <p className="text-yellow-500 text-sm">{review.star} *</p>
+
+                            </div>
+                            <p className="mt-2 text-sm">{review.description}</p>
+                        </div>
+                    })
+                }
+            </div>
         </div>
     </main>
 }
