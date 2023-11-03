@@ -24,7 +24,7 @@ function NavBar() {
           const Icon = navLink.icon;
 
           return (
-            <Link href={navLink.route}>
+            <Link href={navLink.route} key={navLink.label}>
               <div className="flex gap-2 items-center cursor-pointer text-xs lg:text-base">
                 <Icon />
                 <span>{navLink.label}</span>

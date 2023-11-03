@@ -17,7 +17,10 @@ function RecentBookings({ bookings }: Props) {
       <div className="flex flex-col lg:flex-row gap-4 flex-wrap mt-4">
         {bookings.map((booking) => {
           return (
-            <div className="border border-black rounded-lg p-2 grow lg:basis-80">
+            <div
+              className="border border-black rounded-lg p-2 grow lg:basis-80"
+              key={booking.date}
+            >
               <div className="flex justify-between">
                 <div className="flex gap-2 ">
                   <Avatar>
