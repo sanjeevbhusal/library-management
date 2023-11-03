@@ -3,6 +3,9 @@ import ReviewList from "@/app/components/ReviewList";
 import Image from "next/image";
 import { faker } from "@faker-js/faker";
 import RecentBookings from "@/app/components/RecentBookings";
+import { db } from "@/drizzle";
+import { review, user } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
 // import { getExampleTable } from "@/drizzle/schema";;
 
 function generateRandomBooking() {
@@ -60,7 +63,12 @@ function fetchBook(bookdId: number) {
   };
 }
 
-function fetchReviews(bookId: number) {
+async function fetchReviews(bookId: number) {
+  const reviews = await db
+    .select()
+    .from(review)
+    .leftJoin(user, eq(user.id, review.userId));
+  console.log(reviews[0]);
   return generateRandomReviews(10);
 }
 

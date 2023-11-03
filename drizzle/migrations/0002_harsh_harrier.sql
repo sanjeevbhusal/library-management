@@ -1,0 +1,1 @@
+ALTER TABLE "book" RENAME COLUMN "createdAt" TO "uploadedAt";

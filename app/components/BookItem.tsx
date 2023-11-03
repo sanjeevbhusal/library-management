@@ -1,8 +1,9 @@
+import { Book } from "@/drizzle/types";
 import Image from "next/image";
 import Link from "next/link";
 
 interface BookItemProps {
-  book: any;
+  book: Book;
 }
 
 function BookItem({ book }: BookItemProps) {
@@ -10,10 +11,10 @@ function BookItem({ book }: BookItemProps) {
     <div className="basis-72 grow md:grow-0">
       <Link href={`books/${book.id}`}>
         <Image
-          src="https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=2787&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={book.imageUrl}
           alt="book picture"
-          height={100}
-          width={100}
+          height={250}
+          width={250}
           className="rounded-lg w-full h-64"
         />
         <div className="mt-2 font-semibold text-sm flex justify-between">

@@ -8,6 +8,41 @@
       "when": 1699003467398,
       "tag": "0000_complete_jackal",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1699006636608,
+      "tag": "0001_mean_madame_hydra",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1699007203122,
+      "tag": "0002_harsh_harrier",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1699007532044,
+      "tag": "0003_easy_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1699008288003,
+      "tag": "0004_aspiring_micromacro",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1699009287828,
+      "tag": "0005_parched_saracen",
+      "breakpoints": true
     }
   ]
 }

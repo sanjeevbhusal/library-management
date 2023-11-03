@@ -8,9 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "migrate": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' drizzle/migrate.ts",
-    "generate": "drizzle-kit generate:pg --config='./drizzle/config.ts'"
+    "generate": "drizzle-kit generate:pg --config='./drizzle/config.ts'",
+    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' drizzle/seed.ts"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "@faker-js/faker": "^8.2.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@types/node": "20.6.2",
@@ -24,6 +26,7 @@
     "drizzle-orm": "^0.28.6",
     "eslint": "8.49.0",
     "eslint-config-next": "13.5.1",
+    "g": "^2.0.1",
     "lucide-react": "^0.291.0",
     "next": "13.5.1",
     "pg": "^8.11.3",
@@ -35,7 +38,8 @@
     "tailwind-merge": "^2.0.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
-    "use-debounce": "^9.0.4"
+    "use-debounce": "^9.0.4",
+    "vercel": "^32.5.0"
   },
   "devDependencies": {
     "@types/faker": "^6.6.9",

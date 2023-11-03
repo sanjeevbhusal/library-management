@@ -6,11 +6,11 @@ import "dotenv/config";
 const db = drizzle(sql);
 
 async function main() {
-  console.log("Migrating...");
+  console.log("Migrating Tables...");
   await migrate(db, { migrationsFolder: "./drizzle/migrations" });
-  console.log("Migration done succesfully");
+  console.log("Migration succesfull...");
 }
 
 main()
   .catch((err) => console.log(err))
-  .finally(process.exit(0));
+  .finally(() => process.exit(0));
