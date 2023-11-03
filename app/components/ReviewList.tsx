@@ -12,7 +12,6 @@ interface Props {
 }
 
 function ReviewList({ reviews }: Props) {
-  console.log(reviews);
   return (
     <div>
       <h1 className="font-bold text-lg">Reviews</h1>

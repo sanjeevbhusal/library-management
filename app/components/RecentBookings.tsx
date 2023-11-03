@@ -11,7 +11,6 @@ interface Props {
 }
 
 function RecentBookings({ bookings }: Props) {
-  console.log(bookings);
   return (
     <div>
       <h1 className="font-bold text-lg">Recent Bookings</h1>

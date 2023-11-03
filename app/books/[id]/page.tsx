@@ -3,6 +3,7 @@ import ReviewList from "@/app/components/ReviewList";
 import Image from "next/image";
 import { faker } from "@faker-js/faker";
 import RecentBookings from "@/app/components/RecentBookings";
+// import { getExampleTable } from "@/drizzle/schema";;
 
 function generateRandomBooking() {
   const booking = {

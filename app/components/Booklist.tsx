@@ -1,6 +1,10 @@
+import { db } from "@/drizzle";
 import BookItem from "./BookItem";
+import { user } from "@/drizzle/schema";
 
-function fetchBooks(searchTerm: string) {
+async function fetchBooks(searchTerm: string) {
+  const response = await db.select().from(user);
+  console.log("==>", response);
   return [
     {
       id: 1,

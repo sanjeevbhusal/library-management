@@ -10,7 +10,6 @@ function Search() {
   const router = useRouter();
 
   const handleChange = useDebouncedCallback((value: string) => {
-    console.log("Searching...", value);
     const params = new URLSearchParams(searchParams);
 
     if (value) {
