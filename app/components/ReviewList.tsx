@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AiOutlineStar } from "react-icons/ai";
 
 interface Review {
-  reviewer: { id: string; imageUrl: string; name: string };
+  reviewer: { id: string; imageUrl: string; name: string; jobTitle: string };
   star: number;
   content: string;
 }
@@ -27,8 +27,8 @@ function ReviewList({ reviews }: Props) {
                     <AvatarFallback>SB</AvatarFallback>
                   </Avatar>
                   <div className="text-sm text-neutral-600">
-                    <p className="font-semibold">Sanjeev Bhusal</p>
-                    <p>Software Engineer</p>
+                    <p className="font-semibold">{review.reviewer.name}</p>
+                    <p>{review.reviewer.jobTitle}</p>
                   </div>
                 </div>
                 <div className="flex text-yellow-500 text-sm">

@@ -30,6 +30,7 @@ function generateRandomReview() {
       id: faker.string.uuid(),
       imageUrl: faker.image.avatar(),
       name: faker.internet.userName(),
+      jobTitle: faker.person.jobTitle(),
     },
     star: Math.floor(Math.random() * 5) + 1, // Generates a random star rating from 1 to 5
     content: faker.lorem.paragraph(),

@@ -32,7 +32,6 @@
     "use-debounce": "^9.0.4"
   },
   "devDependencies": {
-    "@types/faker": "^6.6.9",
-    "prisma": "^5.5.2"
+    "@types/faker": "^6.6.9"
   }
 }
