@@ -35,6 +35,9 @@ function NavBar() {
           );
         })}
       </div>
+      <Link href="/api/auth/signin">
+        <button className="border px-2">Signin</button>
+      </Link>
     </div>
   );
 }
