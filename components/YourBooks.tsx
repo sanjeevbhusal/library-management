@@ -29,7 +29,6 @@ async function getYourBooks(): Promise<BookWithBookedTime[]> {
 
 async function YourBooks() {
   const books = await getYourBooks();
-  console.log(books);
 
   return (
     <div className="flex flex-col gap-2">

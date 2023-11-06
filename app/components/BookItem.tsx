@@ -13,7 +13,6 @@ function getRelativeDate(date: Date) {
 }
 
 function BookItem({ book, bookedAt }: BookItemProps) {
-  console.log(bookedAt);
   return (
     <div className="basis-72 grow md:grow-0">
       <Link href={`books/${book.id}`}>
