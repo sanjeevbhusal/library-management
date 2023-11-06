@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { sql } from "@vercel/postgres";
-import { account, book, review, user } from "./schema";
+import { account, book, booking, review, user } from "./schema";
 import { NewBook, NewUser } from "./types";
 import { Faker, faker } from "@faker-js/faker";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
@@ -179,7 +179,15 @@ async function main() {
   // });
 }
 
-main()
+async function main1() {
+  await db.insert(booking).values({
+    id: crypto.randomUUID(),
+    userId: "49c3db88-31ab-4c14-84c9-fbe36d57439d",
+    bookId: 42,
+  });
+}
+
+main1()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));

@@ -16,7 +16,6 @@ interface Props {
 
 async function BookList({ searchTerm }: Props) {
   const books = await fetchBooks(searchTerm);
-  console.log(books);
 
   return (
     <div className="flex flex-wrap gap-8 mt-8">

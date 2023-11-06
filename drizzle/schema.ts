@@ -79,3 +79,14 @@ export const review = pgTable("review", {
   rating: RatingEnum("rating"),
   userId: text("userId").references(() => user.id),
 });
+
+export const booking = pgTable("booking", {
+  id: text("id").primaryKey().$defaultFn(crypto.randomUUID),
+  bookId: serial("bookId")
+    .notNull()
+    .references(() => book.id),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});

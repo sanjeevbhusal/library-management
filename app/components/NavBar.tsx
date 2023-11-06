@@ -1,10 +1,11 @@
 "use client";
 
-import { getServerSession } from "next-auth";
+import { Session, getServerSession } from "next-auth";
 import Link from "next/link";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { BiSolidBookOpen } from "react-icons/bi";
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 const navLinks = [
   {
@@ -18,15 +19,18 @@ const navLinks = [
     route: "/",
   },
 ];
-function NavBar() {
-  const { data } = useSession();
 
+interface Props {
+  session: Session | null;
+}
+
+function NavBar({ session }: Props) {
   return (
     <div className="flex justify-between items-center  bg-sky-400  py-4 px-4 lg:px-16 absolute left-0 right-0 top-0">
       <Link href="/">
         <h1 className="font-semibold text-sm lg:text-lg">Library</h1>
       </Link>
-      {data?.user ? (
+      {session?.user ? (
         <div className="flex gap-4">
           {navLinks.map((navLink) => {
             const Icon = navLink.icon;
@@ -46,9 +50,9 @@ function NavBar() {
           </button>
         </div>
       ) : (
-        <Link href="/api/auth/signin">
-          <button className="border px-2">Signin</button>
-        </Link>
+        <Button size="sm" onClick={() => signIn("google")}>
+          Login
+        </Button>
       )}
     </div>
   );

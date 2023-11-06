@@ -1,12 +1,19 @@
 import { Book } from "@/drizzle/types";
 import Image from "next/image";
 import Link from "next/link";
+import ms from "ms";
 
 interface BookItemProps {
   book: Book;
+  bookedAt?: Date;
 }
 
-function BookItem({ book }: BookItemProps) {
+function getRelativeDate(date: Date) {
+  return `${ms(Date.now() - date.getTime())} ago`;
+}
+
+function BookItem({ book, bookedAt }: BookItemProps) {
+  console.log(bookedAt);
   return (
     <div className="basis-72 grow md:grow-0">
       <Link href={`books/${book.id}`}>
@@ -21,7 +28,12 @@ function BookItem({ book }: BookItemProps) {
           <p className="text-sm">{book.name}</p>
           <p className="font-normal">{book.category}</p>
         </div>
-        <p className="text-neutral-500 text-sm mt-1">{book.author}</p>
+        <div className="mt-1 text-sm text-neutral-500 flex justify-between">
+          <p className="text-sm">{book.author}</p>
+          {bookedAt && (
+            <p className="font-normal">{getRelativeDate(bookedAt)}</p>
+          )}
+        </div>
       </Link>
     </div>
   );
