@@ -3,7 +3,8 @@ import { Book } from "@/drizzle/types";
 import { sql } from "@vercel/postgres";
 
 async function getMostPopularBooks() {
-  const response = await sql`SELECT b."bookId", COUNT(b.id) AS booking_count,
+  const response =
+    await sql`SELECT b."bookId" as id, COUNT(b.id) AS booking_count,
        bk."name" AS name, bk."author" AS author, bk."category" AS category, bk."imageUrl" AS "imageUrl"
 FROM "booking" b
 INNER JOIN "book" bk ON b."bookId" = bk."id"

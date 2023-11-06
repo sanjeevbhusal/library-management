@@ -9,14 +9,14 @@ import { Button } from "@/components/ui/button";
 
 const navLinks = [
   {
+    label: "All books",
+    icon: BiSolidBookOpen,
+    route: "/all-books",
+  },
+  {
     label: "Upload Book",
     icon: AiOutlineCloudUpload,
     route: "/upload",
-  },
-  {
-    label: "All books",
-    icon: BiSolidBookOpen,
-    route: "/",
   },
 ];
 
@@ -31,7 +31,7 @@ function NavBar({ session }: Props) {
         <h1 className="font-semibold text-sm lg:text-lg">Library</h1>
       </Link>
       {session?.user ? (
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           {navLinks.map((navLink) => {
             const Icon = navLink.icon;
 
@@ -39,15 +39,15 @@ function NavBar({ session }: Props) {
               <Link href={navLink.route} key={navLink.label}>
                 <div className="flex gap-2 items-center cursor-pointer text-xs lg:text-base">
                   <Icon />
-                  <span>{navLink.label}</span>
+                  <span className="text-base">{navLink.label}</span>
                 </div>
               </Link>
             );
           })}
 
-          <button className="border px-2" onClick={() => signOut()}>
+          <Button size="sm" onClick={() => signOut()}>
             Signout
-          </button>
+          </Button>
         </div>
       ) : (
         <Button size="sm" onClick={() => signIn("google")}>
