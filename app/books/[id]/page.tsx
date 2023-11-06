@@ -94,7 +94,6 @@ export default async function Page({ params }: Props) {
 
   return (
     <main className="flex min-h-screen flex-col p-4 lg:py-8 lg:px-16">
-      <NavBar />
       {!book && (
         <div className="mt-16 grow flex items-center justify-center">
           <h1>This book doesnot exist</h1>
