@@ -1,1 +1,0 @@
-ALTER TABLE "book" ADD COLUMN "imageUrl" text DEFAULT 'https://loremflickr.com/cache/resized/65535_52226317881_a072bb1153_200_200_nofilter.jpg' NOT NULL;

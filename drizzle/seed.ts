@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { sql } from "@vercel/postgres";
-import { book, review, user } from "./schema";
+import { account, book, review, user } from "./schema";
 import { NewBook, NewUser } from "./types";
 import { Faker, faker } from "@faker-js/faker";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
@@ -142,8 +142,10 @@ const books: NewBook[] = [
 async function main() {
   // first delete all the existing data.
   console.log("Deleting all the tables...");
-  await db.delete(user);
+  await db.delete(review);
   await db.delete(book);
+  await db.delete(account);
+  await db.delete(user);
 
   // then create fresh tables
   console.log("Running Migrations to create tables...");
@@ -153,8 +155,11 @@ async function main() {
   // console.log("Seeding data to database...");
   for (let i = 0; i < 10; i++) {
     const u = await db.insert(user).values({
+      id: crypto.randomUUID(),
       name: faker.person.fullName(),
       email: faker.internet.email(),
+      image: faker.internet.avatar(),
+      jobTitle: faker.person.jobTitle(),
     });
   }
   for (let i = 0; i < books.length; i++) {
@@ -167,14 +172,14 @@ async function main() {
     });
   }
 
-  await db.insert(review).values({
-    content: "This is a good review",
-    rating: "5",
-    userId: 73,
-  });
+  // await db.insert(review).values({
+  //   content: "This is a good review",
+  //   rating: "5",
+  //   userId: "945db30d-1b96-42b2-ae04-8d0baeb17083",
+  // });
 }
 
 main()
-  .then(() => console.log("Seed succesfull..."))
+  .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));
