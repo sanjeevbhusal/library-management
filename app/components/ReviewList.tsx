@@ -43,8 +43,7 @@ function ReviewList({ reviews }: Props) {
                     <Avatar>
                       <AvatarImage
                         src={
-                          review.author.imageUrl ||
-                          "https://github.com/shadcn.png"
+                          review.author.image || "https://github.com/shadcn.png"
                         }
                       />
                       <AvatarFallback>
