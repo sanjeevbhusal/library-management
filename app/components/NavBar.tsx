@@ -18,7 +18,9 @@ const navLinks = [
 function NavBar() {
   return (
     <div className="flex justify-between items-center  bg-sky-400  py-4 px-4 lg:px-16 absolute left-0 right-0 top-0">
-      <h1 className="font-semibold text-sm lg:text-lg">Library</h1>
+      <Link href="/">
+        <h1 className="font-semibold text-sm lg:text-lg">Library</h1>
+      </Link>
       <div className="flex gap-4">
         {navLinks.map((navLink) => {
           const Icon = navLink.icon;

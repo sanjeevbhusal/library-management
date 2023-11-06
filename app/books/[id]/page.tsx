@@ -6,6 +6,7 @@ import RecentBookings from "@/app/components/RecentBookings";
 import { db } from "@/drizzle";
 import { review, user } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
+import { Review, User } from "@/drizzle/types";
 // import { getExampleTable } from "@/drizzle/schema";;
 
 function generateRandomBooking() {
@@ -63,13 +64,22 @@ function fetchBook(bookdId: number) {
   };
 }
 
-async function fetchReviews(bookId: number) {
+type ReviewWithAuthor = Review & { author: User };
+
+async function fetchReviews(bookId: number): Promise<ReviewWithAuthor[]> {
   const reviews = await db
     .select()
     .from(review)
     .leftJoin(user, eq(user.id, review.userId));
-  console.log(reviews[0]);
-  return generateRandomReviews(10);
+
+  const reviewWithAuthor = reviews.map(({ review, user }) => {
+    return {
+      ...review,
+      author: user as User,
+    };
+  });
+
+  return reviewWithAuthor;
 }
 
 function fetchRecentBookings(bookId: number) {

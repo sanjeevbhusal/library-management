@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import {
   pgTable,
   serial,
@@ -15,6 +14,8 @@ export const user = pgTable(
     name: text("name").notNull(),
     email: text("email").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
+    imageUrl: text("imageUrl"),
+    jobTitle: text("jobTitle"),
   },
   (user) => {
     return {
@@ -52,7 +53,3 @@ export const review = pgTable("review", {
   rating: RatingEnum("rating"),
   userId: serial("userId").references(() => user.id),
 });
-
-export const reviewRelations = relations(review, ({ one }) => ({
-  author: one(user),
-}));

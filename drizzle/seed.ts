@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { sql } from "@vercel/postgres";
-import { book, user } from "./schema";
+import { book, review, user } from "./schema";
 import { NewBook, NewUser } from "./types";
 import { Faker, faker } from "@faker-js/faker";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
@@ -152,7 +152,7 @@ async function main() {
   // now seed the data.
   // console.log("Seeding data to database...");
   for (let i = 0; i < 10; i++) {
-    await db.insert(user).values({
+    const u = await db.insert(user).values({
       name: faker.person.fullName(),
       email: faker.internet.email(),
     });
@@ -166,6 +166,12 @@ async function main() {
       imageUrl: bookInfo.imageUrl,
     });
   }
+
+  await db.insert(review).values({
+    content: "This is a good review",
+    rating: "5",
+    userId: 73,
+  });
 }
 
 main()
