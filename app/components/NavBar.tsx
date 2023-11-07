@@ -1,10 +1,10 @@
 "use client";
 
-import { Session, getServerSession } from "next-auth";
+import { Session } from "next-auth";
 import Link from "next/link";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { BiSolidBookOpen } from "react-icons/bi";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -17,6 +17,7 @@ const navLinks = [
     label: "Upload Book",
     icon: AiOutlineCloudUpload,
     route: "/upload-book",
+    adminOnly: true,
   },
 ];
 
@@ -33,6 +34,8 @@ function NavBar({ session }: Props) {
       {session?.user ? (
         <div className="flex gap-4 items-center">
           {navLinks.map((navLink) => {
+            if (navLink.adminOnly && session.user.isAdmin != true) return null;
+
             const Icon = navLink.icon;
 
             return (
