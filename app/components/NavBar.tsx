@@ -4,6 +4,7 @@ import { Session } from "next-auth";
 import Link from "next/link";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { BiSolidBookOpen } from "react-icons/bi";
+import { FiUser } from "react-icons/fi";
 import { signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
@@ -17,6 +18,12 @@ const navLinks = [
     label: "Upload Book",
     icon: AiOutlineCloudUpload,
     route: "/upload-book",
+    adminOnly: true,
+  },
+  {
+    label: "Your Library",
+    icon: FiUser,
+    route: "/your-library",
     adminOnly: true,
   },
 ];
