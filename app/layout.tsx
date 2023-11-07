@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import NotLoggedInScreen from "./components/NotLoggedInScreen";
 import NavBar from "./components/NavBar";
 import { Toaster } from "@/components/ui/toaster";
+import authOptions from "./api/auth/[...nextauth]/authOptions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   // make sure the user is available.
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en">
       <body className={inter.className}>
