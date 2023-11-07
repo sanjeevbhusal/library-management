@@ -3,7 +3,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { sql } from "@vercel/postgres";
 import { account, book, booking, review, user } from "./schema";
-import { NewBook, NewUser } from "./types";
+import { Book, Booking, NewBook, NewUser, User } from "./types";
 import { Faker, faker } from "@faker-js/faker";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
 
@@ -16,7 +16,7 @@ function generateRandomImageUrl() {
   });
 }
 
-const books: NewBook[] = [
+const books = [
   {
     name: "To Kill a Mockingbird",
     author: "Harper Lee",
@@ -139,38 +139,105 @@ const books: NewBook[] = [
   },
 ];
 
-async function main() {
-  // first delete all the existing data.
-  console.log("Deleting all the tables...");
+async function deleteTables() {
+  await db.delete(booking);
   await db.delete(review);
   await db.delete(book);
   await db.delete(account);
   await db.delete(user);
+}
 
-  // then create fresh tables
-  console.log("Running Migrations to create tables...");
+async function createTables() {
   await migrate(db, { migrationsFolder: "./drizzle/migrations" });
+}
 
-  // now seed the data.
-  // console.log("Seeding data to database...");
+async function seedUsers() {
+  const users = [];
   for (let i = 0; i < 10; i++) {
-    const u = await db.insert(user).values({
-      id: crypto.randomUUID(),
-      name: faker.person.fullName(),
-      email: faker.internet.email(),
-      image: faker.internet.avatar(),
-      jobTitle: faker.person.jobTitle(),
-    });
+    const u = await db
+      .insert(user)
+      .values({
+        id: crypto.randomUUID(),
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        image: faker.internet.avatar(),
+        jobTitle: faker.person.jobTitle(),
+      })
+      .returning();
+    users.push(u[0]);
   }
+  return users;
+}
+
+async function seedBooks() {
+  const bookList = [];
   for (let i = 0; i < books.length; i++) {
     const bookInfo = books[i];
-    await db.insert(book).values({
-      name: bookInfo.name,
-      author: bookInfo.author,
-      category: bookInfo.category,
-      imageUrl: bookInfo.imageUrl,
+    const b = await db
+      .insert(book)
+      .values({
+        id: crypto.randomUUID(),
+        name: bookInfo.name,
+        author: bookInfo.author,
+        category: bookInfo.category,
+        imageUrl: bookInfo.imageUrl,
+      })
+      .returning();
+    bookList.push(b[0]);
+  }
+  return bookList;
+}
+
+async function seedBookings(users: User[], books: Book[]) {
+  // select 5 random users and create bookings for them.
+  // those 5 random users should have 1 - 3 bookings each.
+  const bookings = [];
+
+  for (let i = 0; i < 5; i++) {
+    const user = users[Math.floor(Math.random() * 10)];
+
+    const numBookings = Math.floor(Math.random() * 3) + 1;
+
+    for (let j = 0; j < numBookings; j++) {
+      const book = books[Math.floor(Math.random() * 20)];
+      const b = await db
+        .insert(booking)
+        .values({
+          id: crypto.randomUUID(),
+          bookId: book.id,
+          userId: user.id,
+        })
+        .returning();
+      bookings.push(b[0]);
+    }
+  }
+  return bookings;
+}
+
+async function seedReviews(bookings: Booking[]) {
+  for (let i = 0; i < bookings.length; i++) {
+    const shouldCreateReview = Math.random() < 0.5 ? true : false;
+
+    if (!shouldCreateReview) {
+      continue;
+    }
+
+    const bookingItem = bookings[i];
+
+    await db.insert(review).values({
+      id: crypto.randomUUID(),
+      bookId: bookingItem.bookId,
+      userId: bookingItem.userId,
+      content: faker.lorem.paragraph(Math.floor(Math.random() * 5) + 1),
     });
   }
+}
+
+async function seedData() {
+  const users = await seedUsers();
+  const books = await seedBooks();
+  const bookings = await seedBookings(users, books);
+  await seedReviews(bookings);
 
   // await db.insert(review).values({
   //   content: "This is a good review",
@@ -179,15 +246,26 @@ async function main() {
   // });
 }
 
-async function main1() {
-  await db.insert(booking).values({
-    id: crypto.randomUUID(),
-    userId: "49c3db88-31ab-4c14-84c9-fbe36d57439d",
-    bookId: 42,
-  });
+async function main() {
+  console.log("Deleting all the tables...");
+  await deleteTables();
+
+  console.log("Running Migrations to create tables...");
+  await createTables();
+
+  console.log("Seeding data ...");
+  await seedData();
 }
 
-main1()
+// async function main1() {
+//   await db.insert(booking).values({
+//     id: crypto.randomUUID(),
+//     userId: "49c3db88-31ab-4c14-84c9-fbe36d57439d",
+//     bookId: 42,
+//   });
+// }
+
+main()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));

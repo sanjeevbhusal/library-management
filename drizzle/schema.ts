@@ -78,6 +78,7 @@ export const review = pgTable("review", {
   content: text("content").notNull(),
   rating: RatingEnum("rating"),
   userId: text("userId").references(() => user.id),
+  bookId: text("bookId").references(() => book.id),
 });
 
 export const booking = pgTable("booking", {
