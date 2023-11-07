@@ -17,6 +17,7 @@ import axios, { AxiosError } from "axios";
 import { Book } from "@/drizzle/types";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -40,18 +41,25 @@ export default function Page() {
     },
     resolver: zodResolver(formSchema),
   });
+  const { startUpload } = useUploadThing("imageUploader");
 
   const { toast } = useToast();
   const router = useRouter();
 
   async function onSubmit(values: FormValues) {
     try {
+      const fileUploadResponse = await startUpload([values.image]);
+      if (!fileUploadResponse) {
+        throw new Error("File upload failed");
+      }
+
       const response = await axios.post("/api/upload-book", {
         name: values.name,
         author: values.author,
         category: values.category,
-        imageUrl: "dkfdkfd",
+        imageUrl: fileUploadResponse[0].url,
       });
+
       const { bookId } = response.data as { bookId: Book["id"] };
       toast({
         description: "Book uploaded successfully",
