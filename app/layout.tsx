@@ -6,6 +6,7 @@ import Provider from "../providers/SessionProvider";
 import { getServerSession } from "next-auth";
 import NotLoggedInScreen from "./components/NotLoggedInScreen";
 import NavBar from "./components/NavBar";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default async function RootLayout({
           <NavBar session={session} />
           {!session ? <NotLoggedInScreen /> : children}
         </Provider>
+        <Toaster />
       </body>
     </html>
   );

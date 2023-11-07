@@ -13,6 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import axios, { AxiosError } from "axios";
+import { Book } from "@/drizzle/types";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -36,9 +40,46 @@ export default function Page() {
     },
     resolver: zodResolver(formSchema),
   });
+
+  const { toast } = useToast();
+  const router = useRouter();
+
   async function onSubmit(values: FormValues) {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    console.log("Submit function ");
+    try {
+      const response = await axios.post("/api/upload-book", {
+        name: values.name,
+        author: values.author,
+        category: values.category,
+        imageUrl: "dkfdkfd",
+      });
+      const { bookId } = response.data as { bookId: Book["id"] };
+      toast({
+        description: "Book uploaded successfully",
+      });
+      form.reset();
+      router.push(`/books/${bookId}`);
+    } catch (e) {
+      const error = e as AxiosError<any, any>;
+      // console.log(error);
+      const statusCode = error.response?.status;
+      console.log("==>", statusCode);
+
+      switch (statusCode) {
+        case 409: {
+          form.setError("name", {
+            message:
+              "Book with this name already exists. Please choose a different name ",
+          });
+          break;
+        }
+        default: {
+          toast({
+            description: "Something went wrong. Please try again later",
+            variant: "destructive",
+          });
+        }
+      }
+    }
   }
 
   return (
