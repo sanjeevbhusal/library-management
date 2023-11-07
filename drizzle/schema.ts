@@ -7,6 +7,7 @@ import {
   pgEnum,
   integer,
   primaryKey,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { AdapterAccount } from "next-auth/adapters";
 
@@ -20,6 +21,7 @@ export const user = pgTable(
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     image: text("image"),
     jobTitle: text("jobTitle"),
+    isAdmin: boolean("isAdmin").default(false),
   },
   (user) => {
     return {

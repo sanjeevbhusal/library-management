@@ -15,6 +15,13 @@
       "when": 1699342758709,
       "tag": "0001_late_shiver_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1699344888920,
+      "tag": "0002_empty_wonder_man",
+      "breakpoints": true
     }
   ]
 }
