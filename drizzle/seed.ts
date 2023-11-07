@@ -6,6 +6,7 @@ import { account, book, booking, review, user } from "./schema";
 import { Book, Booking, NewBook, NewUser, User } from "./types";
 import { Faker, faker } from "@faker-js/faker";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
+import { eq } from "drizzle-orm";
 
 export const db = drizzle(sql);
 
@@ -257,13 +258,12 @@ async function main() {
   await seedData();
 }
 
-// async function main1() {
-//   await db.insert(booking).values({
-//     id: crypto.randomUUID(),
-//     userId: "49c3db88-31ab-4c14-84c9-fbe36d57439d",
-//     bookId: 42,
-//   });
-// }
+async function main1() {
+  await db
+    .update(user)
+    .set({ isAdmin: true })
+    .where(eq(user.id, "ef6fdf3c-ec12-42bc-882d-a5f269c03f0f"));
+}
 
 main()
   .then(() => console.log("Seed successful..."))
