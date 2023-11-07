@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
   const response = await db
     .insert(book)
-    .values(parsedDto.data)
+    .values({ id: crypto.randomUUID(), ...parsedDto.data })
     .returning({ id: book.id });
   const bookId = response[0].id;
 
