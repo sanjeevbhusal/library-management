@@ -16,7 +16,7 @@ const navLinks = [
   {
     label: "Upload Book",
     icon: AiOutlineCloudUpload,
-    route: "/upload",
+    route: "/upload-book",
   },
 ];
 
