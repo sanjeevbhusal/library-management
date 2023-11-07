@@ -34,11 +34,17 @@ async function YourBooks() {
     <div className="flex flex-col gap-2">
       <h1 className="font-medium text-base lg:text-2xl">Your Books</h1>
       <div className="flex flex-wrap gap-8 mt-4">
-        {books.map((book) => {
-          return (
-            <BookItem book={book} key={book.id} bookedAt={book.bookedAt} />
-          );
-        })}
+        {books.length === 0 ? (
+          <h1>
+            You have not read any book yet. Books you read will appear here.
+          </h1>
+        ) : (
+          books.map((book) => {
+            return (
+              <BookItem book={book} key={book.id} bookedAt={book.bookedAt} />
+            );
+          })
+        )}
       </div>
     </div>
   );
