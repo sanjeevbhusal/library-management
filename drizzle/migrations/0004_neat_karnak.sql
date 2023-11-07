@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "isAdmin" SET NOT NULL;

@@ -163,6 +163,7 @@ async function seedUsers() {
         email: faker.internet.email(),
         image: faker.internet.avatar(),
         jobTitle: faker.person.jobTitle(),
+        isAdmin: Math.random() < 0.2 ? true : false,
       })
       .returning();
     users.push(u[0]);
@@ -170,7 +171,7 @@ async function seedUsers() {
   return users;
 }
 
-async function seedBooks() {
+async function seedBooks(users: User[]) {
   const bookList = [];
   for (let i = 0; i < books.length; i++) {
     const bookInfo = books[i];
@@ -182,6 +183,7 @@ async function seedBooks() {
         author: bookInfo.author,
         category: bookInfo.category,
         imageUrl: bookInfo.imageUrl,
+        uploadedBy: users[Math.floor(Math.random() * users.length)].id,
       })
       .returning();
     bookList.push(b[0]);
@@ -236,7 +238,8 @@ async function seedReviews(bookings: Booking[]) {
 
 async function seedData() {
   const users = await seedUsers();
-  const books = await seedBooks();
+  const adminUsers = users.filter((user) => user.isAdmin === true);
+  const books = await seedBooks(adminUsers);
   const bookings = await seedBookings(users, books);
   await seedReviews(bookings);
 
@@ -262,10 +265,10 @@ async function main1() {
   await db
     .update(user)
     .set({ isAdmin: true })
-    .where(eq(user.id, "ef6fdf3c-ec12-42bc-882d-a5f269c03f0f"));
+    .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
 }
 
-main()
+main1()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));

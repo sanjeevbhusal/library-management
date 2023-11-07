@@ -21,7 +21,7 @@ export const user = pgTable(
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     image: text("image"),
     jobTitle: text("jobTitle"),
-    isAdmin: boolean("isAdmin").default(false),
+    isAdmin: boolean("isAdmin").notNull().default(false),
   },
   (user) => {
     return {
@@ -66,6 +66,7 @@ export const book = pgTable(
       .default(
         "https://loremflickr.com/cache/resized/65535_52226317881_a072bb1153_200_200_nofilter.jpg"
       ),
+    uploadedBy: text("uploadedBy").references(() => user.id),
     uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
   },
   (book) => {
