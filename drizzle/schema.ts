@@ -55,7 +55,7 @@ export const RatingEnum = pgEnum("Rating", ["1", "2", "3", "4", "5"]);
 export const book = pgTable(
   "book",
   {
-    id: serial("id").primaryKey(),
+    id: text("id").notNull().primaryKey(),
     name: text("name").notNull(),
     author: text("author").notNull(),
     category: text("category").notNull(),
@@ -74,7 +74,7 @@ export const book = pgTable(
 );
 
 export const review = pgTable("review", {
-  id: serial("id").primaryKey(),
+  id: text("id").notNull().primaryKey(),
   content: text("content").notNull(),
   rating: RatingEnum("rating"),
   userId: text("userId").references(() => user.id),
@@ -82,7 +82,7 @@ export const review = pgTable("review", {
 
 export const booking = pgTable("booking", {
   id: text("id").primaryKey().$defaultFn(crypto.randomUUID),
-  bookId: serial("bookId")
+  bookId: text("bookId")
     .notNull()
     .references(() => book.id),
   userId: text("userId")
