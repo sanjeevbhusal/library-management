@@ -12,16 +12,18 @@ interface Props {
 export default function Page({ searchParams }: Props) {
   return (
     <div className="flex min-h-screen flex-col p-4 lg:py-8 lg:px-16 mt-16 gap-4">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold">All books</h1>
-        <p className="text-neutral-500 text-sm">
-          These are all the books that are available in SecurityPal library.
-        </p>
-        <div className="lg:ml-auto">
+      <div className="flex flex-col lg:flex-row justify-between gap-8">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-semibold">All books</h1>
+          <p className="text-neutral-500 text-sm">
+            These are all the books that are available in SecurityPal library.
+          </p>
+        </div>
+        <div>
           <Search />
         </div>
       </div>
-      <BookList searchTerm={searchParams.query || ""} />{" "}
+      <BookList searchTerm={searchParams.query || ""} />
     </div>
   );
 }

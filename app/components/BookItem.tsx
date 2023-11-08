@@ -10,14 +10,14 @@ interface BookItemProps {
 
 function BookItem({ book, bookedAt }: BookItemProps) {
   return (
-    <div className="basis-72 grow md:grow-0">
+    <div>
       <Link href={`books/${book.id}`}>
         <Image
           src={book.imageUrl}
           alt="book picture"
-          height={250}
+          height={200}
           width={250}
-          className="rounded-lg w-full h-64"
+          className="rounded-lg w-full cursor-pointer"
         />
         <div className="mt-2 font-semibold text-sm flex justify-between">
           <p className="text-sm">{book.name}</p>
