@@ -7,6 +7,7 @@ import { Book, Booking, NewBook, NewUser, User } from "./types";
 import { Faker, faker } from "@faker-js/faker";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
 import { eq } from "drizzle-orm";
+import ms from "ms";
 
 export const db = drizzle(sql);
 
@@ -191,6 +192,13 @@ async function seedBooks(users: User[]) {
   return bookList;
 }
 
+function getRandomFutureDate() {
+  // a millisecond value within 1 and 30 days.
+  const futureDateMilliseconds =
+    Date.now() + ms(Math.floor(Math.random() * 30) + 1 + "d");
+  return new Date(futureDateMilliseconds);
+}
+
 async function seedBookings(users: User[], books: Book[]) {
   // select 5 random users and create bookings for them.
   // those 5 random users should have 1 - 3 bookings each.
@@ -209,6 +217,7 @@ async function seedBookings(users: User[], books: Book[]) {
           id: crypto.randomUUID(),
           bookId: book.id,
           userId: user.id,
+          dueDate: getRandomFutureDate(),
         })
         .returning();
       bookings.push(b[0]);
@@ -261,14 +270,32 @@ async function main() {
   await seedData();
 }
 
-async function main1() {
+async function makeTestUserAdmin() {
+  // only run this when you have created the user via app login.
   await db
     .update(user)
     .set({ isAdmin: true })
     .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
 }
 
-main1()
+async function createBookingForTestUser() {
+  // only run this when you have created the user via app login.
+  const books = await db.select().from(book);
+  const u = await db
+    .select()
+    .from(user)
+    .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
+  for (let i = 0; i < 5; i++) {
+    const book = books[i];
+    await db.insert(booking).values({
+      id: crypto.randomUUID(),
+      bookId: book.id,
+      userId: u[0].id,
+    });
+  }
+}
+
+createBookingForTestUser()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));

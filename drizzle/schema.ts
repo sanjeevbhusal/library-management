@@ -92,5 +92,7 @@ export const booking = pgTable("booking", {
   userId: text("userId")
     .notNull()
     .references(() => user.id),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+  dueDate: timestamp("dueDate"),
+  returnedAt: timestamp("returnedAt"),
 });
