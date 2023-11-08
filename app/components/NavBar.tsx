@@ -10,6 +10,16 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { RxHamburgerMenu } from "react-icons/rx";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useState } from "react";
 
 const navLinks = [
   {
@@ -42,56 +52,108 @@ function NavBar({ session }: Props) {
   const pathname = usePathname();
   console.log(pathname);
 
+  const [openHamburgerMenu, setOpenHamburgerMenu] = useState(false);
+
   return (
     <div className="flex justify-between items-center border-b py-4 px-4 lg:px-16 fixed left-0 right-0 top-0 bg-white z-20">
       <Link href="/">
         <h1 className="font-semibold text-sm lg:text-lg">Library</h1>
       </Link>
-      {session?.user ? (
-        <div>
-          {navLinks.map((navLink) => {
-            if (navLink.adminOnly && session.user.isAdmin != true) return null;
+      <div className="hidden lg:block">
+        {session?.user ? (
+          <div>
+            {navLinks.map((navLink) => {
+              if (navLink.adminOnly && session.user.isAdmin != true)
+                return null;
 
-            return (
-              <Link href={navLink.route} key={navLink.label}>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className={cn("text-gray-500 font-normal relative", {
-                    "text-black": pathname.includes(navLink.route),
-                  })}
-                >
-                  {navLink.label}
-                  {pathname.includes(navLink.route) && (
-                    <Separator className="absolute top-[50px]  bg-black w-[calc(100%-24px)] h-[2px]" />
-                  )}
-                </Button>
-                {/* <div className="flex gap-2 items-center cursor-pointer text-xs lg:text-base">
+              return (
+                <Link href={navLink.route} key={navLink.label}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className={cn("text-gray-500 font-normal relative", {
+                      "text-black": pathname.includes(navLink.route),
+                    })}
+                  >
+                    {navLink.label}
+                    {pathname.includes(navLink.route) && (
+                      <Separator className="absolute top-[50px]  bg-black w-[calc(100%-24px)] h-[2px]" />
+                    )}
+                  </Button>
+                  {/* <div className="flex gap-2 items-center cursor-pointer text-xs lg:text-base">
                   <span className="text-base">{navLink.label}</span>
                 </div> */}
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
 
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-gray-500 font-normal"
+              onClick={() => signOut()}
+            >
+              Logout
+            </Button>
+          </div>
+        ) : (
           <Button
             size="sm"
             variant="ghost"
             className="text-gray-500 font-normal"
-            onClick={() => signOut()}
+            onClick={() => signIn("google")}
           >
-            Logout
+            Login
           </Button>
-        </div>
-      ) : (
-        <Button
-          size="sm"
-          variant="ghost"
-          className="text-gray-500 font-normal"
-          onClick={() => signIn("google")}
-        >
-          Login
-        </Button>
-      )}
+        )}
+      </div>
+      <div className="block lg:hidden">
+        {session?.user ? (
+          <Sheet
+            open={openHamburgerMenu}
+            onOpenChange={() => setOpenHamburgerMenu(!openHamburgerMenu)}
+          >
+            <SheetTrigger>
+              <RxHamburgerMenu size={20} />
+            </SheetTrigger>
+            <SheetContent>
+              <div className="flex flex-col">
+                {navLinks.map((navLink) => {
+                  if (navLink.adminOnly && session.user.isAdmin != true)
+                    return null;
+
+                  return (
+                    <Link href={navLink.route} key={navLink.label}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className={cn(
+                          "w-full justify-start text-gray-500 font-normal",
+                          {
+                            "text-black": pathname.includes(navLink.route),
+                          }
+                        )}
+                        onClick={() => setOpenHamburgerMenu(false)}
+                      >
+                        {navLink.label}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </div>
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-gray-500 font-normal"
+            onClick={() => signIn("google")}
+          >
+            Login
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
