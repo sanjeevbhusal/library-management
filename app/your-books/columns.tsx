@@ -1,6 +1,6 @@
 "use client";
 
-import { Book } from "@/drizzle/types";
+import { Book, User } from "@/drizzle/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getRelativeDate } from "@/lib/utils";
+import Image from "next/image";
 
 const takenBooksColumn: ColumnDef<Book>[] = [
   {
@@ -254,6 +255,33 @@ const uploadedBooksColumn: ColumnDef<Book>[] = [
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "uploadedBy",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="pl-0"
+        >
+          UploadedBy
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const uploadedUser = row.original.uploadedUser as User;
+      return (
+        <Image
+          src={uploadedUser.image as string}
+          alt="User"
+          height={24}
+          width={24}
+          className="h-8 w-8 rounded-full"
+        />
       );
     },
   },

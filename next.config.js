@@ -6,6 +6,7 @@ const nextConfig = {
       "loremflickr.com",
       "picsum.photos",
       "utfs.io",
+      "lh3.googleusercontent.com",
     ],
   },
 };
