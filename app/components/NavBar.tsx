@@ -43,7 +43,7 @@ function NavBar({ session }: Props) {
   console.log(pathname);
 
   return (
-    <div className="flex justify-between items-center border-b py-4 px-4 lg:px-16 fixed left-0 right-0 top-0 bg-white">
+    <div className="flex justify-between items-center border-b py-4 px-4 lg:px-16 fixed left-0 right-0 top-0 bg-white z-20">
       <Link href="/">
         <h1 className="font-semibold text-sm lg:text-lg">Library</h1>
       </Link>
