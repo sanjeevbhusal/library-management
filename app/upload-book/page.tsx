@@ -91,10 +91,13 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-4 lg:py-8 lg:px-16 mt-16 gap-8">
-      <h1 className="font-medium text-base lg:text-2xl">Upload Book</h1>
+    <div className="min-h-screen flex flex-col p-4 lg:py-8 lg:px-16 mt-16 gap-4">
+      <h1 className="font-semibold text-base lg:text-2xl">Upload Book</h1>
+      <p className="text-neutral-500 text-sm">
+        Upload a new book to SecurityPal Library
+      </p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-4">
           <FormField
             control={form.control}
             name="name"
