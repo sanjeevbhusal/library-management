@@ -14,7 +14,12 @@ import { TbCategory } from "react-icons/tb";
 import { Separator } from "@/components/ui/separator";
 import { AiFillStar } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
+import fetchBooking from "@/actions/fetchBooking";
 // import { getExampleTable } from "@/drizzle/schema";;
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
+import { cn } from "@/lib/utils";
+import fetchUserBookings from "@/actions/fetchUserBookings";
 
 function generateRandomBooking() {
   const booking = {
@@ -86,6 +91,8 @@ function fetchRecentBookings(bookId: string) {
 
 export default async function Page({ params }: Props) {
   const book = await fetchBook(params.id);
+  const booking = await fetchBooking(params.id);
+  const userBookings = await fetchUserBookings();
   // const reviews = await fetchReviews(params.id);
   // const recentBookings = await fetchRecentBookings(params.id);
 
@@ -165,9 +172,42 @@ export default async function Page({ params }: Props) {
             </div>
           </div>
           {/* Implement Available or Not Available for this User. The book might be sold out or the user might have reached the max limit */}
-          <Button size={"lg"} className="mt-8">
+          {book.quantity <= booking.length && (
+            <Alert variant={"destructive"} className="mt-8">
+              <Terminal className="h-4 w-4" />
+              <AlertTitle>Heads up!</AlertTitle>
+              <AlertDescription>
+                This book is not available right now since all copies of this
+                book have been booked already.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {userBookings.length >= 3 && (
+            <Alert variant={"destructive"} className="mt-8">
+              <Terminal className="h-4 w-4" />
+              <AlertTitle>Heads up!</AlertTitle>
+              <AlertDescription>
+                This book is not available right now since you have exceeded the
+                booking limit. Please return some of other books if you wish to
+                rent this book.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Button
+            size={"lg"}
+            className={cn("mt-8", {
+              "cursor-not-allowed":
+                book.quantity <= booking.length || userBookings.length >= 3,
+            })}
+            disabled={
+              book.quantity <= booking.length || userBookings.length >= 3
+            }
+          >
             Book Now
           </Button>
+
           {/* <div className="mt-8">
             <ReviewList reviews={reviews} />
           </div>

@@ -211,6 +211,7 @@ async function seedBooks() {
           ],
         imageUrl: bookInfo.imageUrl,
         uploadedBy: users[0].id,
+        quantity: Math.floor(Math.random() * 10) + 1,
       })
       .returning();
     bookList.push(b[0]);
@@ -402,7 +403,21 @@ const testUserUploadedBooks = [
 // Step 3 : Make that test user as admin. Run makeTestUserAdmin()
 // Step 4 : Upload Books to the application. Run seedBooks()
 
-seedBooks()
+async function createBooking() {
+  const u = await db
+    .select()
+    .from(user)
+    .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
+
+  await db.insert(booking).values({
+    id: crypto.randomUUID(),
+    bookId: "d6c84350-fd13-4fda-ae15-621b03efff01",
+    userId: u[0].id,
+    dueDate: getRandomFutureDate(),
+  });
+}
+
+createBooking()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));
