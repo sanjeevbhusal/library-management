@@ -9,8 +9,15 @@ import { MdOutlineAccountCircle } from "react-icons/md";
 import { RiAncientPavilionLine } from "react-icons/ri";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CategoryItem from "./CategoryItem";
+import { Category } from "@/drizzle/types";
+import { IconType } from "react-icons";
 
-const categories = [
+interface Categories {
+  label: Category;
+  icon: IconType;
+}
+
+const categories: Categories[] = [
   {
     label: "Fiction",
     icon: CgGhostCharacter,

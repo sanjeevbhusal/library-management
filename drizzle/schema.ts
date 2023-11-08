@@ -8,8 +8,20 @@ import {
   integer,
   primaryKey,
   boolean,
+  PgEnumColumn,
 } from "drizzle-orm/pg-core";
 import { AdapterAccount } from "next-auth/adapters";
+
+export const Category = pgEnum("Category", [
+  "Fiction",
+  "Romantic",
+  "Children",
+  "Science Fiction",
+  "Mystery",
+  "Biography",
+  "Historical",
+  "Fantasy",
+]);
 
 export const user = pgTable(
   "user",
@@ -60,7 +72,7 @@ export const book = pgTable(
     id: text("id").notNull().primaryKey(),
     name: text("name").notNull(),
     author: text("author").notNull(),
-    category: text("category").notNull(),
+    category: Category("category").notNull(),
     imageUrl: text("imageUrl")
       .notNull()
       .default(
