@@ -25,7 +25,7 @@ function Search() {
 
   return (
     <Input
-      className=" w-full lg:w-96"
+      className="w-full lg:w-96"
       placeholder="Search Books..."
       defaultValue={searchTerm}
       onChange={(e) => handleChange(e.target.value)}
