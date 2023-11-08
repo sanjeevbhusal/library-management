@@ -1,15 +1,11 @@
 import { Book } from "@/drizzle/types";
 import Image from "next/image";
 import Link from "next/link";
-import ms from "ms";
+import { getRelativeDate } from "@/lib/utils";
 
 interface BookItemProps {
   book: Book;
   bookedAt?: Date;
-}
-
-function getRelativeDate(date: Date) {
-  return `${ms(Date.now() - date.getTime())} ago`;
 }
 
 function BookItem({ book, bookedAt }: BookItemProps) {

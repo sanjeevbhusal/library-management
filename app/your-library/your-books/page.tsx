@@ -1,7 +1,7 @@
 import fetchUserBooks from "@/actions/fetchUserBooks";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
-import columns from "./columns";
+import { takenBooksColumn, returnedBooksColumn } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
 import { Separator } from "@/components/ui/separator";
 
@@ -21,7 +21,7 @@ export default async function Page() {
           These are all the books that you have currently taken and should
           return before the deadline.
         </p>
-        <DataTable columns={columns} data={currentlyTakenBooks} />
+        <DataTable columns={takenBooksColumn} data={currentlyTakenBooks} />
         <div className="relative mt-8">
           <Separator className="absolute -left-2 lg:-left-16 w-screen" />
         </div>
@@ -32,7 +32,7 @@ export default async function Page() {
           These are all the books that you have taken in the past and have
           already returned.
         </p>
-        <DataTable columns={columns} data={returnedBooks} />
+        <DataTable columns={returnedBooksColumn} data={returnedBooks} />
         <div className="relative mt-8">
           <Separator className="absolute -left-2 lg:-left-16 w-screen" />
         </div>

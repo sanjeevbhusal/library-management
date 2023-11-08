@@ -22,7 +22,12 @@ async function fetchUserBooks(userId: string, currentlyTaken: boolean) {
       .where(and(eq(booking.userId, userId), isNotNull(booking.returnedAt)));
   }
 
-  return bookings.map((booking) => booking.book as Book);
+  return bookings.map(({ booking, book }) => ({
+    ...(book as Book),
+    bookedDate: booking?.createdAt,
+    returnedDate: booking?.returnedAt,
+    dueDate: booking?.dueDate,
+  }));
 }
 
 export default fetchUserBooks;

@@ -291,11 +291,17 @@ async function createBookingForTestUser() {
       id: crypto.randomUUID(),
       bookId: book.id,
       userId: u[0].id,
+      dueDate: getRandomFutureDate(),
     });
   }
 }
 
-createBookingForTestUser()
+async function main2() {
+  await makeTestUserAdmin();
+  await createBookingForTestUser();
+}
+
+main()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));
