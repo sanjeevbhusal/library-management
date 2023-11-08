@@ -1,8 +1,10 @@
 import { db } from "@/drizzle";
 import { book } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import authOptions from "../auth/[...nextauth]/authOptions";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -12,6 +14,7 @@ const formSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
   const dto = await request.json();
   const parsedDto = formSchema.safeParse(dto);
 
@@ -33,7 +36,11 @@ export async function POST(request: NextRequest) {
 
   const response = await db
     .insert(book)
-    .values({ id: crypto.randomUUID(), ...parsedDto.data })
+    .values({
+      id: crypto.randomUUID(),
+      ...parsedDto.data,
+      uploadedBy: session?.user?.id as string,
+    })
     .returning({ id: book.id });
   const bookId = response[0].id;
 

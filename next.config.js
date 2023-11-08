@@ -7,6 +7,7 @@ const nextConfig = {
       "picsum.photos",
       "utfs.io",
       "lh3.googleusercontent.com",
+      "cloudflare-ipfs.com",
     ],
   },
 };

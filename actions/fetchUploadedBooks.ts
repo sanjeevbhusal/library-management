@@ -1,15 +1,22 @@
 import { db } from "@/drizzle";
 import { book, booking, user } from "@/drizzle/schema";
-import { Book } from "@/drizzle/types";
+import { Book, User } from "@/drizzle/types";
 import { and, eq, isNotNull, isNull, isSQLWrapper, ne } from "drizzle-orm";
 
-async function fetchUploadedBooks(userId: string) {
+export interface UploadedBooksResult extends Book {
+  uploadedUser: User;
+}
+
+async function fetchUploadedBooks(): Promise<UploadedBooksResult[]> {
   const books = await db
     .select()
     .from(book)
-    .fullJoin(user, eq(user.id, book.uploadedBy))
-    .where(eq(book.uploadedBy, userId));
-  return books.map(({ book, user }) => ({ ...book, uploadedUser: user }));
+    .leftJoin(user, eq(user.id, book.uploadedBy));
+
+  return books.map(({ book, user }) => ({
+    ...(book as Book),
+    uploadedUser: user as User,
+  }));
 }
 
 export default fetchUploadedBooks;

@@ -15,8 +15,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getRelativeDate } from "@/lib/utils";
 import Image from "next/image";
+import {
+  CurrentlyTakenBooksResult,
+  ReturnedBooksResult,
+} from "@/actions/fetchUserBooks";
+import { UploadedBooksResult } from "@/actions/fetchUploadedBooks";
 
-const takenBooksColumn: ColumnDef<Book>[] = [
+const takenBooksColumn: ColumnDef<CurrentlyTakenBooksResult>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -129,7 +134,7 @@ const takenBooksColumn: ColumnDef<Book>[] = [
     },
   },
 ];
-const returnedBooksColumn: ColumnDef<Book>[] = [
+const returnedBooksColumn: ColumnDef<ReturnedBooksResult>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -242,7 +247,7 @@ const returnedBooksColumn: ColumnDef<Book>[] = [
     },
   },
 ];
-const uploadedBooksColumn: ColumnDef<Book>[] = [
+const uploadedBooksColumn: ColumnDef<UploadedBooksResult>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -273,7 +278,11 @@ const uploadedBooksColumn: ColumnDef<Book>[] = [
       );
     },
     cell: ({ row }) => {
-      const uploadedUser = row.original.uploadedUser as User;
+      const uploadedUser = row.original.uploadedUser;
+      if (!row.original.name) {
+        console.log(row.original);
+      }
+
       return (
         <Image
           src={uploadedUser.image as string}

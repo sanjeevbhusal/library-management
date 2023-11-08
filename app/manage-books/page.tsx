@@ -7,8 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import fetchUploadedBooks from "@/actions/fetchUploadedBooks";
 
 export default async function Page() {
-  const session = await getServerSession(authOptions);
-  const uploadedBooks = await fetchUploadedBooks(session?.user.id as string);
+  const uploadedBooks = await fetchUploadedBooks();
 
   return (
     <div className="flex min-h-screen flex-col p-4 lg:py-8 lg:px-16 mt-16 gap-4">
