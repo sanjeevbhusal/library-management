@@ -2,14 +2,32 @@ import "dotenv/config";
 
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { sql } from "@vercel/postgres";
-import { account, book, booking, review, user } from "./schema";
-import { Book, Booking, NewBook, NewUser, User } from "./types";
+import { Category, account, book, booking, review, user } from "./schema";
+import {
+  Book,
+  Booking,
+  Category as CategoryType,
+  NewBook,
+  NewUser,
+  User,
+} from "./types";
 import { Faker, faker } from "@faker-js/faker";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
 import { eq } from "drizzle-orm";
 import ms from "ms";
 
 export const db = drizzle(sql);
+
+const availableCategories: CategoryType[] = [
+  "Fiction",
+  "Romantic",
+  "Children",
+  "Science Fiction",
+  "Mystery",
+  "Biography",
+  "Historical",
+  "Fantasy",
+];
 
 function generateRandomImageUrl() {
   return faker.image.url({
@@ -153,38 +171,46 @@ async function createTables() {
   await migrate(db, { migrationsFolder: "./drizzle/migrations" });
 }
 
-async function seedUsers() {
-  const users = [];
-  for (let i = 0; i < 10; i++) {
-    const u = await db
-      .insert(user)
-      .values({
-        id: crypto.randomUUID(),
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        image: faker.internet.avatar(),
-        jobTitle: faker.person.jobTitle(),
-        isAdmin: Math.random() < 0.2 ? true : false,
-      })
-      .returning();
-    users.push(u[0]);
-  }
-  return users;
-}
+// async function seedUsers() {
+//   const users = [];
+//   for (let i = 0; i < 10; i++) {
+//     const u = await db
+//       .insert(user)
+//       .values({
+//         id: crypto.randomUUID(),
+//         name: faker.person.fullName(),
+//         email: faker.internet.email(),
+//         image: faker.internet.avatar(),
+//         jobTitle: faker.person.jobTitle(),
+//         isAdmin: Math.random() < 0.2 ? true : false,
+//       })
+//       .returning();
+//     users.push(u[0]);
+//   }
+//   return users;
+// }
 
-async function seedBooks(users: User[], books: any[]) {
+async function seedBooks() {
+  const users = await db
+    .select()
+    .from(user)
+    .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
+
   const bookList = [];
-  for (let i = 0; i < books.length; i++) {
-    const bookInfo = books[i];
+  for (let i = 0; i < booksData.length; i++) {
+    const bookInfo = booksData[i];
     const b = await db
       .insert(book)
       .values({
         id: crypto.randomUUID(),
         name: bookInfo.name,
         author: bookInfo.author,
-        category: bookInfo.category,
+        category:
+          availableCategories[
+            Math.floor(Math.random() * availableCategories.length)
+          ],
         imageUrl: bookInfo.imageUrl,
-        uploadedBy: users[Math.floor(Math.random() * users.length)].id,
+        uploadedBy: users[0].id,
       })
       .returning();
     bookList.push(b[0]);
@@ -199,76 +225,76 @@ function getRandomFutureDate() {
   return new Date(futureDateMilliseconds);
 }
 
-async function seedBookings(users: User[], books: Book[]) {
-  // select 5 random users and create bookings for them.
-  // those 5 random users should have 1 - 3 bookings each.
-  const bookings = [];
+// async function seedBookings(users: User[], books: Book[]) {
+//   // select 5 random users and create bookings for them.
+//   // those 5 random users should have 1 - 3 bookings each.
+//   const bookings = [];
 
-  for (let i = 0; i < 5; i++) {
-    const user = users[Math.floor(Math.random() * 10)];
+//   for (let i = 0; i < 5; i++) {
+//     const user = users[Math.floor(Math.random() * 10)];
 
-    const numBookings = Math.floor(Math.random() * 3) + 1;
+//     const numBookings = Math.floor(Math.random() * 3) + 1;
 
-    for (let j = 0; j < numBookings; j++) {
-      const book = books[Math.floor(Math.random() * 20)];
-      const b = await db
-        .insert(booking)
-        .values({
-          id: crypto.randomUUID(),
-          bookId: book.id,
-          userId: user.id,
-          dueDate: getRandomFutureDate(),
-        })
-        .returning();
-      bookings.push(b[0]);
-    }
-  }
-  return bookings;
-}
+//     for (let j = 0; j < numBookings; j++) {
+//       const book = books[Math.floor(Math.random() * 20)];
+//       const b = await db
+//         .insert(booking)
+//         .values({
+//           id: crypto.randomUUID(),
+//           bookId: book.id,
+//           userId: user.id,
+//           dueDate: getRandomFutureDate(),
+//         })
+//         .returning();
+//       bookings.push(b[0]);
+//     }
+//   }
+//   return bookings;
+// }
 
-async function seedReviews(bookings: Booking[]) {
-  for (let i = 0; i < bookings.length; i++) {
-    const shouldCreateReview = Math.random() < 0.5 ? true : false;
+// async function seedReviews(bookings: Booking[]) {
+//   for (let i = 0; i < bookings.length; i++) {
+//     const shouldCreateReview = Math.random() < 0.5 ? true : false;
 
-    if (!shouldCreateReview) {
-      continue;
-    }
+//     if (!shouldCreateReview) {
+//       continue;
+//     }
 
-    const bookingItem = bookings[i];
+//     const bookingItem = bookings[i];
 
-    await db.insert(review).values({
-      id: crypto.randomUUID(),
-      bookId: bookingItem.bookId,
-      userId: bookingItem.userId,
-      content: faker.lorem.paragraph(Math.floor(Math.random() * 5) + 1),
-    });
-  }
-}
+//     await db.insert(review).values({
+//       id: crypto.randomUUID(),
+//       bookId: bookingItem.bookId,
+//       userId: bookingItem.userId,
+//       content: faker.lorem.paragraph(Math.floor(Math.random() * 5) + 1),
+//     });
+//   }
+// }
 
-async function seedData() {
-  const users = await seedUsers();
-  const adminUsers = users.filter((user) => user.isAdmin === true);
-  const books = await seedBooks(adminUsers, booksData);
-  const bookings = await seedBookings(users, books);
-  await seedReviews(bookings);
+// async function seedData() {
+//   const users = await seedUsers();
+//   const adminUsers = users.filter((user) => user.isAdmin === true);
+//   const books = await seedBooks(adminUsers, booksData);
+//   const bookings = await seedBookings(users, books);
+//   await seedReviews(bookings);
 
-  // await db.insert(review).values({
-  //   content: "This is a good review",
-  //   rating: "5",
-  //   userId: "945db30d-1b96-42b2-ae04-8d0baeb17083",
-  // });
-}
+//   // await db.insert(review).values({
+//   //   content: "This is a good review",
+//   //   rating: "5",
+//   //   userId: "945db30d-1b96-42b2-ae04-8d0baeb17083",
+//   // });
+// }
 
-async function main() {
-  console.log("Deleting all the tables...");
-  await deleteTables();
+// async function main() {
+//   console.log("Deleting all the tables...");
+//   await deleteTables();
 
-  console.log("Running Migrations to create tables...");
-  await createTables();
+//   console.log("Running Migrations to create tables...");
+//   await createTables();
 
-  console.log("Seeding data ...");
-  await seedData();
-}
+//   console.log("Seeding data ...");
+//   await seedData();
+// }
 
 async function makeTestUserAdmin() {
   // only run this when you have created the user via app login.
@@ -357,21 +383,26 @@ const testUserUploadedBooks = [
   },
 ];
 
-async function uploadBooksByTestUser() {
-  const u = await db
-    .select()
-    .from(user)
-    .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
-  await seedBooks([u[0]], testUserUploadedBooks);
-}
+// async function uploadBooksByTestUser() {
+//   const u = await db
+//     .select()
+//     .from(user)
+//     .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
+//   await seedBooks([u[0]], testUserUploadedBooks);
+// }
 
-async function main2() {
-  // await makeTestUserAdmin();
-  // await createBookingForTestUser();
-  await uploadBooksByTestUser();
-}
+// async function main2() {
+//   await uploadBooksByTestUser();
+// }
 
-main2()
+// Whenever you run a seed file, you should first clear your database. Yos should only have 1 user in your database. This will be the main user. Since, the application only supports oAuth, you should do this manually.
+
+// Step 1 : Delete all the tables Run deleteTables()
+// Step 2 : Login with the main test user (manual step)
+// Step 3 : Make that test user as admin. Run makeTestUserAdmin()
+// Step 4 : Upload Books to the application. Run seedBooks()
+
+seedBooks()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));

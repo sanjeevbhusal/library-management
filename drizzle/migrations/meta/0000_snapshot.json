@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "2430cef2-d6ae-4aaa-bc99-ac4a4f38f18b",
+  "id": "a8668cac-86ec-4cb7-86c1-c033dd1437ae",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -126,7 +126,7 @@
         },
         "category": {
           "name": "category",
-          "type": "text",
+          "type": "Category",
           "primaryKey": false,
           "notNull": true
         },
@@ -136,6 +136,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'https://loremflickr.com/cache/resized/65535_52226317881_a072bb1153_200_200_nofilter.jpg'"
+        },
+        "uploadedBy": {
+          "name": "uploadedBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "uploadedAt": {
           "name": "uploadedAt",
@@ -154,7 +160,21 @@
           "isUnique": true
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "book_uploadedBy_user_id_fk": {
+          "name": "book_uploadedBy_user_id_fk",
+          "tableFrom": "book",
+          "tableTo": "user",
+          "columnsFrom": [
+            "uploadedBy"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -184,8 +204,20 @@
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
+        },
+        "dueDate": {
+          "name": "dueDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "returnedAt": {
+          "name": "returnedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -247,6 +279,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "bookId": {
+          "name": "bookId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -257,6 +295,19 @@
           "tableTo": "user",
           "columnsFrom": [
             "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_bookId_book_id_fk": {
+          "name": "review_bookId_book_id_fk",
+          "tableFrom": "review",
+          "tableTo": "book",
+          "columnsFrom": [
+            "bookId"
           ],
           "columnsTo": [
             "id"
@@ -314,6 +365,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "isAdmin": {
+          "name": "isAdmin",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {
@@ -331,6 +389,19 @@
     }
   },
   "enums": {
+    "Category": {
+      "name": "Category",
+      "values": {
+        "Fiction": "Fiction",
+        "Romantic": "Romantic",
+        "Children": "Children",
+        "Science Fiction": "Science Fiction",
+        "Mystery": "Mystery",
+        "Biography": "Biography",
+        "Historical": "Historical",
+        "Fantasy": "Fantasy"
+      }
+    },
     "Rating": {
       "name": "Rating",
       "values": {

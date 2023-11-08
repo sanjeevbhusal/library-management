@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1699337169794,
-      "tag": "0000_open_juggernaut",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1699342758709,
-      "tag": "0001_late_shiver_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1699344888920,
-      "tag": "0002_empty_wonder_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1699347638076,
-      "tag": "0003_mighty_ulik",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1699347726290,
-      "tag": "0004_neat_karnak",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1699418902413,
-      "tag": "0005_little_agent_brand",
+      "when": 1699458099466,
+      "tag": "0000_lazy_newton_destine",
       "breakpoints": true
     }
   ]
