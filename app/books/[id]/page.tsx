@@ -53,17 +53,17 @@ function generateRandomReviews(count: number) {
 }
 
 interface Props {
-  params: { id: number };
+  params: { id: string };
 }
 
-async function fetchBook(bookdId: number) {
-  const b = await db.select().from(book).where(eq(book.id, bookdId));
+async function fetchBook(bookId: string) {
+  const b = await db.select().from(book).where(eq(book.id, bookId));
   return b.length === 0 ? null : b[0];
 }
 
 type ReviewWithAuthor = Review & { author: User };
 
-async function fetchReviews(bookId: number): Promise<ReviewWithAuthor[]> {
+async function fetchReviews(bookId: string): Promise<ReviewWithAuthor[]> {
   const reviews = await db
     .select()
     .from(review)
@@ -79,7 +79,7 @@ async function fetchReviews(bookId: number): Promise<ReviewWithAuthor[]> {
   return reviewWithAuthor;
 }
 
-function fetchRecentBookings(bookId: number) {
+function fetchRecentBookings(bookId: string) {
   return generateRandomBookings(10); // Generate 10 random bookings
 }
 
