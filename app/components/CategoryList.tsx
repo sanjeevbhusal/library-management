@@ -60,7 +60,14 @@ function CategoryList() {
 
   function addCategoryToSearchParams(category: string) {
     const params = new URLSearchParams(searchParams);
-    params.set("category", category);
+
+    const currentCategoryValue = params.get("category");
+    if (currentCategoryValue === category) {
+      params.delete("category");
+    } else {
+      params.set("category", category);
+    }
+
     router.push(`${pathname}?${params.toString()}`);
   }
 
