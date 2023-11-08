@@ -18,7 +18,7 @@ function generateRandomImageUrl() {
   });
 }
 
-const books = [
+const booksData = [
   {
     name: "To Kill a Mockingbird",
     author: "Harper Lee",
@@ -172,7 +172,7 @@ async function seedUsers() {
   return users;
 }
 
-async function seedBooks(users: User[]) {
+async function seedBooks(users: User[], books: any[]) {
   const bookList = [];
   for (let i = 0; i < books.length; i++) {
     const bookInfo = books[i];
@@ -248,7 +248,7 @@ async function seedReviews(bookings: Booking[]) {
 async function seedData() {
   const users = await seedUsers();
   const adminUsers = users.filter((user) => user.isAdmin === true);
-  const books = await seedBooks(adminUsers);
+  const books = await seedBooks(adminUsers, booksData);
   const bookings = await seedBookings(users, books);
   await seedReviews(bookings);
 
@@ -295,13 +295,83 @@ async function createBookingForTestUser() {
     });
   }
 }
+const testUserUploadedBooks = [
+  {
+    name: "Whispers of the Celestial Serpent",
+    author: "Evelyn Sterling",
+    category: "Fantasy",
+  },
 
-async function main2() {
-  await makeTestUserAdmin();
-  await createBookingForTestUser();
+  {
+    name: "Chronicles of the Clockwork Kingdom",
+    author: "Victor Thorne",
+    category: "Steampunk",
+  },
+
+  {
+    name: "The Quantum Paradox",
+    author: "Lila Everett",
+    category: "Science Fiction",
+  },
+
+  {
+    name: "Midnight Roses and Secret Passages",
+    author: "Lucia Blackwood",
+    category: "Mystery",
+  },
+
+  {
+    name: "Eternal Echoes of Elysium",
+    author: "Serenity Wells",
+    category: "Romance",
+  },
+
+  {
+    name: "The Enchanted Atlas",
+    author: "Orion Skylar",
+    category: "Adventure",
+  },
+
+  {
+    name: "Serpents of the Lost Realm",
+    author: "Xander Drake",
+    category: "Fantasy",
+  },
+
+  {
+    name: "The Luminous Labyrinth",
+    author: "Aria Nightshade",
+    category: "Mystery",
+  },
+
+  {
+    name: "Infinite Realms of Imagination",
+    author: "Quincy Rivers",
+    category: "Science Fiction",
+  },
+
+  {
+    name: "The Obsidian Amulet",
+    author: "Mara Blackthorn",
+    category: "Historical Fiction",
+  },
+];
+
+async function uploadBooksByTestUser() {
+  const u = await db
+    .select()
+    .from(user)
+    .where(eq(user.email, "sanjeev.bhusal@securitypalhq.com"));
+  await seedBooks([u[0]], testUserUploadedBooks);
 }
 
-main()
+async function main2() {
+  // await makeTestUserAdmin();
+  // await createBookingForTestUser();
+  await uploadBooksByTestUser();
+}
+
+main2()
   .then(() => console.log("Seed successful..."))
   .catch(console.log)
   .finally(() => process.exit(0));
