@@ -11,10 +11,11 @@ export default async function Page() {
   const uploadedBooks = await fetchUploadedBooks(session?.user.id as string);
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Uploaded books</h1>
+    <div className="flex min-h-screen flex-col p-4 lg:py-8 lg:px-16 mt-16 gap-4">
+      <h1 className="text-2xl font-semibold">Manage books</h1>
       <p className="text-neutral-500 text-sm">
-        These are all the books that you have uploaded.
+        These are all the books that are available in SecurityPal Library. You
+        can view, edit and delete these books.
       </p>
       <DataTable columns={uploadedBooksColumn} data={uploadedBooks} />
       <div className="relative mt-8">
@@ -23,5 +24,3 @@ export default async function Page() {
     </div>
   );
 }
-
-// p-2 lg:py-8 lg:px-16

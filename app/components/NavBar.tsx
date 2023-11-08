@@ -29,7 +29,7 @@ const navLinks = [
   },
   {
     label: "Manage Books",
-    route: "/your-library",
+    route: "/manage-books",
     adminOnly: true,
   },
 ];

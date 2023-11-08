@@ -26,7 +26,7 @@ export default async function Page() {
           <Separator className="absolute -left-2 lg:-left-16 w-screen" />
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      {/* <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold">Returned books</h1>
         <p className="text-neutral-500 text-sm">
           These are all the books that you have taken in the past and have
@@ -36,7 +36,7 @@ export default async function Page() {
         <div className="relative mt-8">
           <Separator className="absolute -left-2 lg:-left-16 w-screen" />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
