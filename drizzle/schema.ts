@@ -80,6 +80,7 @@ export const book = pgTable(
       ),
     uploadedBy: text("uploadedBy").references(() => user.id),
     uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+    quantity: integer("quantity").notNull(),
   },
   (book) => {
     return {

@@ -8,6 +8,20 @@
       "when": 1699458099466,
       "tag": "0000_lazy_newton_destine",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1699463466795,
+      "tag": "0001_spotty_havok",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1699463768406,
+      "tag": "0002_tiresome_manta",
+      "breakpoints": true
     }
   ]
 }
