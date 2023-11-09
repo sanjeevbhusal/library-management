@@ -8,6 +8,7 @@ const nextConfig = {
       "utfs.io",
       "lh3.googleusercontent.com",
       "cloudflare-ipfs.com",
+      "a0.muscache.com",
     ],
   },
 };
