@@ -40,7 +40,7 @@ const navLinks = [
   {
     label: "Manage Books",
     route: "/manage-books",
-    adminOnly: true,
+    // adminOnly: true,
   },
 ];
 
@@ -140,6 +140,16 @@ function NavBar({ session }: Props) {
                     </Link>
                   );
                 })}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="w-full justify-start text-gray-500 font-normal"
+                  onClick={() => signOut()}
+                  text-gray-500
+                  font-normal
+                >
+                  Logout
+                </Button>
               </div>
             </SheetContent>
           </Sheet>
