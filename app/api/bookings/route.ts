@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
+
   const parsedDto = schema.safeParse(dto);
   if (!parsedDto.success) {
     return NextResponse.json({ error: parsedDto.error }, { status: 400 });
@@ -66,6 +67,13 @@ export async function POST(request: NextRequest) {
   if (activeBookings >= 3) {
     return NextResponse.json(
       { error: "User has exceed booking limit" },
+      { status: 400 }
+    );
+  }
+
+  if (fetchUserResponse.find((booking) => booking.bookId === bookId)) {
+    return NextResponse.json(
+      { error: "User has already booked this book" },
       { status: 400 }
     );
   }

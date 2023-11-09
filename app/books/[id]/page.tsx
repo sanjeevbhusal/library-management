@@ -6,14 +6,15 @@ import { eq } from "drizzle-orm";
 import { Review, User } from "@/drizzle/types";
 import React from "react";
 import fetchBook from "@/actions/fetchBook";
-import fetchBooking from "@/actions/fetchBooking";
+import getActiveBookingsByBookId from "@/actions/getActiveBookingsByBookId";
 import Image from "next/image";
 // import { getExampleTable } from "@/drizzle/schema";;
 
-import fetchUserBookings from "@/actions/fetchUserBookings";
+import getActiveBookingsByUserId from "@/actions/getActiveBookingsByUserId";
 import BookItem from "@/components/BookItem";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
+import getUserBookReview from "@/actions/getBookReviewByUserId";
 
 function generateRandomBooking() {
   const booking = {
@@ -85,8 +86,18 @@ function fetchRecentBookings(bookId: string) {
 
 export default async function Page({ params }: Props) {
   const book = await fetchBook(params.id);
-  const bookBooking = await fetchBooking(params.id);
-  const userBookings = await fetchUserBookings();
+  const activeBookBookings = await getActiveBookingsByBookId(params.id);
+  const activeUserBookings = await getActiveBookingsByUserId();
+  const userBookReview = await getUserBookReview(params.id);
+
+  console.log(userBookReview);
+
+  // I want to fetch the reviews for a book.
+  // I want to know if the user has submitted a review or not.
+
+  // I want to know all the books that are currently rented by a user. getCurrentlyRentedUserBooks
+  // I want to know all the active bookings for a book. getActiveBookingsForABook
+
   // const reviews = await fetchReviews(params.id);
   // const recentBookings = await fetchRecentBookings(params.id);
 
@@ -125,8 +136,9 @@ export default async function Page({ params }: Props) {
       {book && (
         <BookItem
           book={book}
-          booking={bookBooking}
-          userBookings={userBookings}
+          activeBookBookings={activeBookBookings}
+          activeUserBookings={activeUserBookings}
+          userBookReview={userBookReview}
           key={book.id}
         />
       )}

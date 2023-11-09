@@ -4,7 +4,8 @@ import { book, booking } from "@/drizzle/schema";
 import { and, eq, isNull } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 
-async function fetchUserBooking() {
+// This function returns all the currently rented books for a user. Currently Rented means user has not yet returned the book yet.
+async function getActiveBookingsByUserId() {
   const session = await getServerSession(authOptions);
   return await db
     .select()
@@ -17,4 +18,4 @@ async function fetchUserBooking() {
     );
 }
 
-export default fetchUserBooking;
+export default getActiveBookingsByUserId;

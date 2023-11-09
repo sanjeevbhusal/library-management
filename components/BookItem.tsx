@@ -1,8 +1,8 @@
 "use client";
 
-import { Book, Booking } from "@/drizzle/types";
+import { Book, Booking, Review } from "@/drizzle/types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Terminal } from "lucide-react";
+import { BookCheck, Loader2, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BsFillPersonFill } from "react-icons/bs";
 import { TbCategory } from "react-icons/tb";
@@ -35,20 +35,59 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "./ui/use-toast";
 import Link from "next/link";
+import BookInfo from "@/app/components/BookInfo";
+import { useRouter } from "next/navigation";
+import { Textarea } from "./ui/textarea";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 
 interface Props {
   book: Book;
-  booking: Booking[];
-  userBookings: Booking[];
+  activeBookBookings: Booking[];
+  activeUserBookings: Booking[];
+  userBookReview: Review | null;
 }
 
-function BookItem({ book, booking, userBookings }: Props) {
-  const user = useSession();
-  const [isLoading, setIsLoading] = useState(false);
+const schema = z.object({
+  review: z.string().min(50, "Please write at least 50 characters"),
+});
 
+type FormValues = z.infer<typeof schema>;
+
+function BookItem({
+  book,
+  activeBookBookings,
+  activeUserBookings,
+  userBookReview,
+}: Props) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  console.log("Date", date);
+
+  const user = useSession();
   const { toast, dismiss } = useToast();
+
+  const form = useForm<FormValues>({
+    defaultValues: {
+      review: "",
+    },
+    resolver: zodResolver(schema),
+  });
+
+  async function createReview(values: FormValues) {}
 
   async function createBooking() {
     setIsLoading(true);
@@ -72,6 +111,8 @@ function BookItem({ book, booking, userBookings }: Props) {
 
         duration: 10000,
       });
+
+      router.refresh();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -81,10 +122,16 @@ function BookItem({ book, booking, userBookings }: Props) {
     } finally {
       setIsLoading(false);
       setShowConfirmation(false);
+      setDate(new Date());
     }
-
-    console.log(date);
   }
+
+  const isBookAvailable = activeBookBookings.length < book.quantity;
+  const isUserEligible = activeUserBookings.length < 3;
+  const bookAlreadyRented = !!activeUserBookings.find(
+    (booking) => booking.bookId === book.id
+  );
+  const hasWrittenReview = !!userBookReview;
 
   return (
     <div className="flex grow flex-col">
@@ -99,61 +146,10 @@ function BookItem({ book, booking, userBookings }: Props) {
           className="w-full h-[350px] lg:rounded-2xl"
         />
       </div>
-      <h3 className="font-semibold text-2xl mt-[370px] lg:mt-[20px]">
-        {book.name}
-      </h3>
-      <div className=" border border-gray-300 rounded-lg px-12 md:px-20 lg:px-28 py-4 flex items-center justify-between mt-6 font-medium">
-        <div className="flex flex-col items-center">
-          {/* TODO: Implement Rating */}
-          <p>4.82</p>
-          <div className="flex gap-1 ">
-            {new Array(5).fill(0).map((value, index) => (
-              <AiFillStar key={index} size={9} />
-            ))}
-          </div>
-        </div>
-        <Separator
-          orientation="vertical"
-          className="w-[1px] h-10 bg-gray-300"
-        />
-        {/* TODO: Implement Popularity */}
-        <div>Extremely popular</div>
-        <Separator
-          orientation="vertical"
-          className="w-[1px] h-10 bg-gray-300"
-        />
 
-        <div className="flex flex-col items-center">
-          {/* TODO: Implement Review Count, Implement if pressed go to reviews section feature */}
-          <p>20</p>
-          <p className="text-xs underline">Reviews</p>
-        </div>
-      </div>
+      <BookInfo book={book} />
 
-      <div className="relative mt-8">
-        <Separator className="absolute -left-4 w-screen" />
-      </div>
-      <div className="text-neutral-500 flex-col text-sm flex gap-4 mt-4">
-        <div className="flex gap-4 mt-4">
-          <BsFillPersonFill size={24} className="text-black" />{" "}
-          <div className="text-gray-500 text-sm -mt-1">
-            <p className="text-black text-base font-semibold">{book.author}</p>
-            <p className="mt-1">
-              Specializes in Thriller, Romantic and Fiction Books
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-6 mt-4">
-          <TbCategory size={24} className="text-black" />{" "}
-          <div className="text-gray-500 text-sm -mt-1">
-            <p className="text-black text-base font-semibold">
-              {book.category}
-            </p>
-          </div>
-        </div>
-      </div>
-      {/* Implement Available or Not Available for this User. The book might be sold out or the user might have reached the max limit */}
-      {book.quantity <= booking.length && (
+      {!isBookAvailable ? (
         <Alert variant={"destructive"} className="mt-8">
           <Terminal className="h-4 w-4" />
           <AlertTitle>Heads up!</AlertTitle>
@@ -162,9 +158,7 @@ function BookItem({ book, booking, userBookings }: Props) {
             have been booked already.
           </AlertDescription>
         </Alert>
-      )}
-
-      {userBookings.length >= 3 && (
+      ) : !isUserEligible ? (
         <Alert variant={"destructive"} className="mt-8">
           <Terminal className="h-4 w-4" />
           <AlertTitle>Heads up!</AlertTitle>
@@ -173,51 +167,56 @@ function BookItem({ book, booking, userBookings }: Props) {
             you wish to buy more.
           </AlertDescription>
         </Alert>
+      ) : bookAlreadyRented ? (
+        <Alert variant={"destructive"} className="mt-8">
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Heads up!</AlertTitle>
+          <AlertDescription>
+            You have already rented this book. You cannot rent the same book
+            more than once.
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <>
+          <h1 className="mt-16 text-lg">When will you return this book ?</h1>
+          <div className="mt-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[280px] justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </>
       )}
 
-      <h1 className="mt-16 text-lg">When will you return this book ?</h1>
-      <div className="mt-4">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[280px] justify-start text-left font-normal",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <div className="mt-8 flex bg-red-500 items-stretch ">
-        <AlertDialog
-          open={showConfirmation}
-          // onOpenChange={(event) => {
-          //   console.log(event);
-          //   setShowConfirmation(!showConfirmation);
-          // }}
-        >
+      <div className="mt-8 flex items-stretch ">
+        <AlertDialog open={showConfirmation}>
           <AlertDialogTrigger className="w-full" asChild>
             <Button
               size={"lg"}
               className={cn("w-full", {
                 "cursor-not-allowed":
-                  book.quantity <= booking.length || userBookings.length >= 3,
+                  !isBookAvailable || !isUserEligible || bookAlreadyRented,
               })}
               disabled={
-                book.quantity <= booking.length || userBookings.length >= 3
+                !isBookAvailable || !isUserEligible || bookAlreadyRented
               }
               onClick={() => setShowConfirmation(true)}
             >
@@ -243,6 +242,53 @@ function BookItem({ book, booking, userBookings }: Props) {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+      </div>
+
+      {bookAlreadyRented ? (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(createReview)} className="mt-8">
+            <FormField
+              control={form.control}
+              name="review"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <div>
+                      <h3 className="text-xl font-semibold">Write a Review</h3>
+                      <p className="mt-4 text-sm font-normal">
+                        Write about the book summary, the learnings, style of
+                        presenting information etc
+                      </p>
+                    </div>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="This book reflects the realities of modern world and its ...."
+                      style={{
+                        marginTop: "28px",
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Please write at least 50 characters
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="mt-4 w-full" size={"lg"}>
+              Submit Review
+            </Button>
+          </form>
+        </Form>
+      ) : null}
+
+      <div className="mt-8">
+        <h3 className="text-xl font-semibold">Reviews</h3>
+        <p className="font-medium text-base text-gray-500 mt-4">
+          No Reviews Available
+        </p>
       </div>
 
       {/* <div className="mt-8">
