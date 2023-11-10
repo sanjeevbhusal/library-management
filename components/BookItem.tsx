@@ -232,7 +232,10 @@ function BookItem({
         />
       </div>
 
-      <BookInfo book={book} />
+      <BookInfo
+        book={book}
+        reviewCount={bookReviews.length + (userBookReview ? 1 : 0)}
+      />
 
       {!isBookAvailable ? (
         <Alert variant={"destructive"} className="mt-8">
@@ -391,7 +394,7 @@ function BookItem({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-8 mt-8">
+      <div className="flex flex-col gap-8 mt-8" id="reviews">
         {userBookReview && session.data ? (
           <div>
             <h3 className="text-xl font-semibold">Your Review</h3>

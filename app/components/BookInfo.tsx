@@ -1,14 +1,19 @@
+"use client";
+
 import { Separator } from "@/components/ui/separator";
 import { Book } from "@/drizzle/types";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AiFillStar } from "react-icons/ai";
 import { BsFillPersonFill } from "react-icons/bs";
 import { TbCategory } from "react-icons/tb";
 
 interface Props {
   book: Book;
+  reviewCount: number;
 }
 
-function BookInfo({ book }: Props) {
+function BookInfo({ book, reviewCount }: Props) {
   return (
     <div className="flex flex-col">
       <h3 className="font-semibold text-2xl mt-[370px] lg:mt-[20px]">
@@ -37,8 +42,10 @@ function BookInfo({ book }: Props) {
 
         <div className="flex flex-col items-center">
           {/* TODO: Implement Review Count, Implement if pressed go to reviews section feature */}
-          <p>20</p>
-          <p className="text-xs underline">Reviews</p>
+          <p>{reviewCount}</p>
+          <Link href={`/books/${book.id}#reviews`}>
+            <p className="text-xs underline">Reviews</p>
+          </Link>
         </div>
       </div>
       <div className="relative mt-8">
