@@ -224,9 +224,7 @@ function BookItem({
     <div className="flex grow flex-col">
       <div className="w-screen absolute lg:static lg:w-full left-0">
         <Image
-          src={
-            "https://a0.muscache.com/im/pictures/miso/Hosting-10989371/original/46c0c87f-d9bc-443c-9b64-24d9e594b54c.jpeg?im_w=720"
-          }
+          src={book.imageUrl}
           alt="book picture"
           height={350}
           width={250}
