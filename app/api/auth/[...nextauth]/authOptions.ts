@@ -26,6 +26,7 @@ const authOptions: AuthOptions = {
 
         token.id = dbUser[0].id;
         token.isAdmin = dbUser[0].isAdmin;
+        token.jobTitle = dbUser[0].jobTitle;
       }
       return token;
     },
@@ -36,6 +37,7 @@ const authOptions: AuthOptions = {
           ...session.user,
           id: token.id as string,
           isAdmin: token.isAdmin as boolean,
+          jobTitle: token.jobTitle as string,
         },
       };
       return sessionWithUserInfo;
