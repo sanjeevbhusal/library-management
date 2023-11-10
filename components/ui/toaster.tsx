@@ -9,6 +9,7 @@ import {
   ToastViewport,
 } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 export function Toaster() {
   const { toasts } = useToast();
@@ -17,8 +18,12 @@ export function Toaster() {
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
-          <Toast key={id} {...props} className="bg-blue-500 text-white">
-            <div className="grid gap-1 ">
+          <Toast
+            key={id}
+            {...props}
+            className={cn({ "bg-blue-500": props.variant !== "destructive" })}
+          >
+            <div className="grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
                 <ToastDescription>{description}</ToastDescription>

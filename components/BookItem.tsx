@@ -1,13 +1,13 @@
 "use client";
 
-import { Book, Booking, Review } from "@/drizzle/types";
+import { Book, Booking, Review, User } from "@/drizzle/types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { BookCheck, Loader2, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BsFillPersonFill } from "react-icons/bs";
 import { TbCategory } from "react-icons/tb";
 import { Separator } from "@/components/ui/separator";
-import { AiFillStar } from "react-icons/ai";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -50,6 +50,9 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { Input } from "./ui/input";
+import { faker } from "@faker-js/faker";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 
 interface Props {
   book: Book;
@@ -58,8 +61,33 @@ interface Props {
   userBookReview: Review | null;
 }
 
+// {
+//       required_error: "Please give a rating between 1 to 5",
+//     })
+
+function getUserInitials(user: User) {
+  // if there is only firstname, then get the first 2 characters.
+  // if there is a first name and the lastname, then get the first character from firstname and first character from last name.
+
+  const nameList = user.name.split(" ");
+  const firstName = nameList[0];
+  const lastName = nameList[nameList.length - 1];
+
+  let userInitilas = firstName[0].toUpperCase();
+  if (lastName) {
+    userInitilas += lastName[0].toUpperCase();
+  }
+  return userInitilas;
+}
+
 const schema = z.object({
   review: z.string().min(50, "Please write at least 50 characters"),
+  rating: z
+    .string({ required_error: "Please give a rating between 1 to 5" })
+    .refine((value) => {
+      const parsedValue = parseInt(value);
+      return parsedValue >= 1 && parsedValue <= 5;
+    }, "Please give a rating between 1 to 5"),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -72,25 +100,85 @@ function BookItem({
 }: Props) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
+  const [showReviewUpdateConfirmation, setShowReviewUpdateConfirmation] =
+    useState(false);
   const router = useRouter();
+  const session = useSession();
+  console.log(session);
 
   console.log("Date", date);
-
-  const user = useSession();
   const { toast, dismiss } = useToast();
 
   const form = useForm<FormValues>({
     defaultValues: {
       review: "",
+      rating: "",
     },
     resolver: zodResolver(schema),
   });
 
-  async function createReview(values: FormValues) {}
+  const updateReviewForm = useForm<FormValues>({
+    defaultValues: {
+      review: userBookReview?.content,
+      rating: userBookReview?.rating || "",
+    },
+    resolver: zodResolver(schema),
+  });
+
+  async function createReview(values: FormValues) {
+    try {
+      await axios.post(`/api/review`, {
+        bookId: book.id,
+        content: values.review,
+        rating: values.rating,
+      });
+
+      toast({
+        description: "Review added successfully",
+        duration: 5000,
+      });
+
+      form.reset();
+
+      router.refresh();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Something went wrong while submitting review.",
+      });
+      console.log(error);
+    }
+  }
+
+  async function updateReview(values: FormValues) {
+    try {
+      await axios.put(`/api/review/${userBookReview?.id}`, {
+        bookId: book.id,
+        content: values.review,
+        rating: values.rating,
+      });
+
+      toast({
+        description: "Review updated successfully",
+        duration: 5000,
+      });
+
+      form.reset();
+      router.refresh();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Something went wrong while updating review.",
+      });
+      console.log(error);
+    } finally {
+      setShowReviewUpdateConfirmation(false);
+    }
+  }
 
   async function createBooking() {
-    setIsLoading(true);
+    setIsBooking(true);
     try {
       await axios.post(`/api/bookings`, {
         bookId: book.id,
@@ -120,7 +208,7 @@ function BookItem({
       });
       console.log(error);
     } finally {
-      setIsLoading(false);
+      setIsBooking(false);
       setShowConfirmation(false);
       setDate(new Date());
     }
@@ -236,59 +324,200 @@ function BookItem({
               <AlertDialogCancel onClick={() => setShowConfirmation(false)}>
                 Cancel
               </AlertDialogCancel>
-              <AlertDialogAction onClick={createBooking} disabled={isLoading}>
-                {isLoading ? <Loader2 className="animate-spin" /> : "Confirm"}
+              <AlertDialogAction onClick={createBooking} disabled={isBooking}>
+                {isBooking ? <Loader2 className="animate-spin" /> : "Confirm"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </div>
 
-      {bookAlreadyRented ? (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(createReview)} className="mt-8">
-            <FormField
-              control={form.control}
-              name="review"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <div>
-                      <h3 className="text-xl font-semibold">Write a Review</h3>
-                      <p className="mt-4 text-sm font-normal">
-                        Write about the book summary, the learnings, style of
-                        presenting information etc
-                      </p>
-                    </div>
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="This book reflects the realities of modern world and its ...."
-                      style={{
-                        marginTop: "28px",
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Please write at least 50 characters
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      {bookAlreadyRented && !userBookReview ? (
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold">Write a Review</h3>
 
-            <Button type="submit" className="mt-4 w-full" size={"lg"}>
-              Submit Review
-            </Button>
-          </form>
-        </Form>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(createReview)}
+              className="space-y-8 py-4"
+            >
+              <FormField
+                control={form.control}
+                name="review"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Review</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Write about the book summary, the learnings, style of
+                      presenting information etc. Please write at least 50
+                      characters
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rating"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Give Rating</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Out of 1 to 5, how would you rate this book ?
+                    </FormDescription>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="mt-4 w-full"
+                size={"lg"}
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "Submit Review"
+                )}
+              </Button>
+            </form>
+          </Form>
+        </div>
       ) : null}
 
-      <div className="mt-8">
-        <h3 className="text-xl font-semibold">Reviews</h3>
-        <p className="font-medium text-base text-gray-500 mt-4">
-          No Reviews Available
-        </p>
+      <div className="flex flex-col gap-8 mt-8">
+        {userBookReview && session.data ? (
+          <div>
+            <h3 className="text-xl font-semibold">Your Review</h3>
+            <div
+              className="border border-black rounded-lg p-2 grow lg:basis-80 mt-4"
+              key={userBookReview.content}
+            >
+              <div className="flex justify-between">
+                <div className="flex gap-2 ">
+                  <Avatar>
+                    <AvatarImage
+                      src={
+                        session.data?.user.image ||
+                        "https://github.com/shadcn.png"
+                      }
+                    />
+                    <AvatarFallback>
+                      {getUserInitials(session.data?.user as User)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-sm text-neutral-600">
+                    <p className="font-semibold">{session.data?.user.name}</p>
+                    <p>
+                      {session.data?.user.jobTitle || faker.person.jobTitle()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex text-yellow-500 text-sm">
+                  {new Array(parseInt(userBookReview.rating || "0")).fill(
+                    <AiOutlineStar />
+                  )}
+                </div>
+              </div>
+              <p className="mt-2 text-sm">{userBookReview.content}</p>
+            </div>
+            <div className="mt-2">
+              <AlertDialog open={showReviewUpdateConfirmation}>
+                <AlertDialogTrigger
+                  className="block text-sm ml-auto border-b border-black"
+                  onClick={() => setShowReviewUpdateConfirmation(true)}
+                >
+                  Update Review
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Update Review</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      <Form {...updateReviewForm}>
+                        <form
+                          onSubmit={updateReviewForm.handleSubmit(updateReview)}
+                          className="space-y-8 py-4"
+                        >
+                          <FormField
+                            control={updateReviewForm.control}
+                            name="review"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Review</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                  Write about the book summary, the learnings,
+                                  style of presenting information etc. Please
+                                  write at least 50 characters
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={updateReviewForm.control}
+                            name="rating"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Give Rating</FormLabel>
+                                <FormControl>
+                                  <Input type="number" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                  Out of 1 to 5, how would you rate this book ?
+                                </FormDescription>
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <AlertDialogFooter>
+                            <AlertDialogCancel
+                              onClick={() =>
+                                setShowReviewUpdateConfirmation(false)
+                              }
+                            >
+                              Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              disabled={updateReviewForm.formState.isSubmitting}
+                              type="submit"
+                            >
+                              {updateReviewForm.formState.isSubmitting ? (
+                                <Loader2 className="animate-spin" />
+                              ) : (
+                                "Update"
+                              )}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </form>
+                      </Form>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        ) : null}
+
+        <div>
+          <h3 className="text-xl font-semibold">Reviews</h3>
+          <p className="font-medium text-base text-gray-500 mt-4">
+            No Reviews Available
+          </p>
+        </div>
       </div>
 
       {/* <div className="mt-8">
