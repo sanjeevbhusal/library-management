@@ -15,6 +15,7 @@ import BookItem from "@/components/BookItem";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import getUserBookReview from "@/actions/getBookReviewByUserId";
+import getBookReviews from "@/actions/bookReviews";
 
 function generateRandomBooking() {
   const booking = {
@@ -89,6 +90,7 @@ export default async function Page({ params }: Props) {
   const activeBookBookings = await getActiveBookingsByBookId(params.id);
   const activeUserBookings = await getActiveBookingsByUserId();
   const userBookReview = await getUserBookReview(params.id);
+  const bookReviews = await getBookReviews(params.id);
 
   console.log(userBookReview);
 
@@ -139,6 +141,9 @@ export default async function Page({ params }: Props) {
           activeBookBookings={activeBookBookings}
           activeUserBookings={activeUserBookings}
           userBookReview={userBookReview}
+          bookReviews={bookReviews.filter(
+            (review) => review.id !== userBookReview?.id
+          )}
           key={book.id}
         />
       )}

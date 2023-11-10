@@ -53,17 +53,15 @@ import {
 import { Input } from "./ui/input";
 import { faker } from "@faker-js/faker";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { ReviewWithUser } from "@/actions/bookReviews";
 
 interface Props {
   book: Book;
   activeBookBookings: Booking[];
   activeUserBookings: Booking[];
   userBookReview: Review | null;
+  bookReviews: ReviewWithUser[];
 }
-
-// {
-//       required_error: "Please give a rating between 1 to 5",
-//     })
 
 function getUserInitials(user: User) {
   // if there is only firstname, then get the first 2 characters.
@@ -97,6 +95,7 @@ function BookItem({
   activeBookBookings,
   activeUserBookings,
   userBookReview,
+  bookReviews,
 }: Props) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -400,7 +399,7 @@ function BookItem({
             <h3 className="text-xl font-semibold">Your Review</h3>
             <div
               className="border border-black rounded-lg p-2 grow lg:basis-80 mt-4"
-              key={userBookReview.content}
+              key={userBookReview.id}
             >
               <div className="flex justify-between">
                 <div className="flex gap-2 ">
@@ -515,7 +514,44 @@ function BookItem({
         <div>
           <h3 className="text-xl font-semibold">Reviews</h3>
           <p className="font-medium text-base text-gray-500 mt-4">
-            No Reviews Available
+            {bookReviews.length === 0
+              ? "No Reviews Available"
+              : bookReviews.map((review) => {
+                  return (
+                    <div
+                      className="border border-black rounded-lg p-2 grow lg:basis-80 mt-4"
+                      key={review.id}
+                    >
+                      <div className="flex justify-between">
+                        <div className="flex gap-2 ">
+                          <Avatar>
+                            <AvatarImage
+                              src={
+                                review.user.image ||
+                                "https://github.com/shadcn.png"
+                              }
+                            />
+                            <AvatarFallback>
+                              {getUserInitials(review.user)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="text-sm text-neutral-600">
+                            <p className="font-semibold">{review.user.name}</p>
+                            <p>
+                              {review.user.jobTitle || faker.person.jobTitle()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex text-yellow-500 text-sm">
+                          {new Array(parseInt(review.rating || "0")).fill(
+                            <AiOutlineStar />
+                          )}
+                        </div>
+                      </div>
+                      <p className="mt-2 text-sm">{review.content}</p>
+                    </div>
+                  );
+                })}
           </p>
         </div>
       </div>
