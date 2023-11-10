@@ -16,6 +16,7 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import getUserBookReview from "@/actions/getBookReviewByUserId";
 import getBookReviews from "@/actions/bookReviews";
+import getWeeklyBookRanking from "@/actions/getWeeklyBookRanking";
 
 function generateRandomBooking() {
   const booking = {
@@ -91,8 +92,13 @@ export default async function Page({ params }: Props) {
   const activeUserBookings = await getActiveBookingsByUserId();
   const userBookReview = await getUserBookReview(params.id);
   const bookReviews = await getBookReviews(params.id);
+  const weeklyBookRanking = await getWeeklyBookRanking(params.id);
+  // const
 
-  console.log(userBookReview);
+  // 2nd highest booked book.
+  // 1st highest booked book.
+
+  // getBookRanking
 
   // I want to fetch the reviews for a book.
   // I want to know if the user has submitted a review or not.
@@ -144,6 +150,7 @@ export default async function Page({ params }: Props) {
           bookReviews={bookReviews.filter(
             (review) => review.id !== userBookReview?.id
           )}
+          weeklyBookRanking={weeklyBookRanking}
           key={book.id}
         />
       )}

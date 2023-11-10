@@ -61,6 +61,7 @@ interface Props {
   activeUserBookings: Booking[];
   userBookReview: Review | null;
   bookReviews: ReviewWithUser[];
+  weeklyBookRanking: number;
 }
 
 function getUserInitials(user: User) {
@@ -96,6 +97,7 @@ function BookItem({
   activeUserBookings,
   userBookReview,
   bookReviews,
+  weeklyBookRanking,
 }: Props) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -238,6 +240,7 @@ function BookItem({
         reviews={
           userBookReview ? [userBookReview, ...bookReviews] : bookReviews
         }
+        weeklyBookRanking={weeklyBookRanking}
       />
 
       {!isBookAvailable ? (

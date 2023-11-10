@@ -1,5 +1,6 @@
 "use client";
 
+import getWeeklyBookRanking from "@/actions/getWeeklyBookRanking";
 import { Separator } from "@/components/ui/separator";
 import { Book, Review } from "@/drizzle/types";
 import Link from "next/link";
@@ -12,6 +13,7 @@ interface Props {
   book: Book;
   reviewCount: number;
   reviews: Review[];
+  weeklyBookRanking: number;
 }
 
 function calculateAverageRating(reviews: Review[]) {
@@ -19,11 +21,14 @@ function calculateAverageRating(reviews: Review[]) {
     (acc, review) => acc + parseInt(review.rating!),
     0
   );
-  const average = sum / reviews.length;
+  const average = sum === 0 ? 0 : sum / reviews.length;
   return average;
 }
 
-function BookInfo({ book, reviewCount, reviews }: Props) {
+// how do you determine if a book is popular?
+// past week ma top 5 ma parxa ki pardena.
+
+function BookInfo({ book, reviewCount, reviews, weeklyBookRanking }: Props) {
   const averageRating = calculateAverageRating(reviews);
 
   return (
@@ -34,7 +39,7 @@ function BookInfo({ book, reviewCount, reviews }: Props) {
       <div className=" border border-gray-300 rounded-lg px-4  md:px-20 lg:px-28 py-4 flex items-center justify-between mt-6 font-medium">
         <div className="flex flex-col items-center">
           {/* TODO: Implement Rating */}
-          <p>{averageRating}</p>
+          <p>{averageRating || "No Ratings "}</p>
           <div className="flex gap-1 ">
             {new Array(averageRating).fill(0).map((value, index) => (
               <AiFillStar key={index} size={9} />
@@ -46,7 +51,18 @@ function BookInfo({ book, reviewCount, reviews }: Props) {
           className="w-[1px] h-10 bg-gray-300"
         />
         {/* TODO: Implement Popularity */}
-        <div>Extremely popular</div>
+        <div className="flex flex-col gap-2 text-center">
+          <div>
+            {weeklyBookRanking > 0 && weeklyBookRanking < 5
+              ? "Extremely popular"
+              : "Not so popular"}
+          </div>
+          <p className="text-xs text-gray-500">
+            {weeklyBookRanking === 0
+              ? "Never booked"
+              : " Ranked #{weeklyBookRanking} last week, in terms of booking"}
+          </p>
+        </div>
         <Separator
           orientation="vertical"
           className="w-[1px] h-10 bg-gray-300"
