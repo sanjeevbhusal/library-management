@@ -235,6 +235,9 @@ function BookItem({
       <BookInfo
         book={book}
         reviewCount={bookReviews.length + (userBookReview ? 1 : 0)}
+        reviews={
+          userBookReview ? [userBookReview, ...bookReviews] : bookReviews
+        }
       />
 
       {!isBookAvailable ? (

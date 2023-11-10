@@ -1,7 +1,7 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import { Book } from "@/drizzle/types";
+import { Book, Review } from "@/drizzle/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AiFillStar } from "react-icons/ai";
@@ -11,9 +11,21 @@ import { TbCategory } from "react-icons/tb";
 interface Props {
   book: Book;
   reviewCount: number;
+  reviews: Review[];
 }
 
-function BookInfo({ book, reviewCount }: Props) {
+function calculateAverageRating(reviews: Review[]) {
+  const sum = reviews.reduce(
+    (acc, review) => acc + parseInt(review.rating!),
+    0
+  );
+  const average = sum / reviews.length;
+  return average;
+}
+
+function BookInfo({ book, reviewCount, reviews }: Props) {
+  const averageRating = calculateAverageRating(reviews);
+
   return (
     <div className="flex flex-col">
       <h3 className="font-semibold text-2xl mt-[370px] lg:mt-[20px]">
@@ -22,9 +34,9 @@ function BookInfo({ book, reviewCount }: Props) {
       <div className=" border border-gray-300 rounded-lg px-4  md:px-20 lg:px-28 py-4 flex items-center justify-between mt-6 font-medium">
         <div className="flex flex-col items-center">
           {/* TODO: Implement Rating */}
-          <p>4.82</p>
+          <p>{averageRating}</p>
           <div className="flex gap-1 ">
-            {new Array(5).fill(0).map((value, index) => (
+            {new Array(averageRating).fill(0).map((value, index) => (
               <AiFillStar key={index} size={9} />
             ))}
           </div>
